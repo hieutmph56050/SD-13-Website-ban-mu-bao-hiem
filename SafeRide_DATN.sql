@@ -198,7 +198,7 @@ CREATE TABLE LoaiMu (
     NgayTao DATETIME DEFAULT GETDATE() NOT NULL,            -- Ngày tạo (tự động lấy thời gian hiện tại)
     NguoiCapNhat NVARCHAR(255),                             -- Người cập nhật loại mũ (có thể để NULL)
     NgayCapNhat DATETIME,                                   -- Ngày cập nhật loại mũ (có thể để NULL)
-    TrangThai VARCHAR(50) NOT NULL                          -- Trạng thái loại mũ (không được để NULL)
+    TrangThai NVARCHAR(50) NOT NULL                          -- Trạng thái loại mũ (không được để NULL)
 );
 
 CREATE TABLE KichThuoc (
@@ -334,11 +334,11 @@ VALUES
 --INSERT TaiKhoan
 INSERT INTO TaiKhoan (ID_VaiTro, TenDangNhap, MatKhau, HoTen, NgaySinh, GioiTinh, SDT, Email, CCCD, Avatar, NguoiTao, TrangThai)
 VALUES 
-    (1, 'tuan', 'tuan', N'Phạm Anh Tuấn', '2004-12-01', 1, '0123456789', 'tuanpaph35819@fpt.edu.vn', '123456789012', 'avatar1.jpg', '', 1),
-    (1, 'nhanvien1', 'password123', N'Trần Thị B', '1992-02-02', 0, '0987654321', 'nhanvien1@example.com', '123456789013', 'avatar2.jpg', '', 1),
-    (1, 'khachhang1', 'password123', N'Lê Văn C', '1995-03-03', 1, '0123987654', 'khachhang1@example.com', '123456789014', 'avatar3.jpg', '', 1),
-    (1, 'admin2', 'password123', N'Phạm Văn D', '1985-04-04', 1, '0123456780', 'admin2@example.com', '123456789015', 'avatar4.jpg', '', 1),
-    (2, 'nhanvien2', 'password123', N'Nguyễn Thị E', '1993-05-05', 0, '0123456790', 'nhanvien2@example.com', '123456789016', 'avatar5.jpg', '', 1);
+    (1, 'tuan', 'tuan', N'Phạm Anh Tuấn', '2004-12-01', 1, '0123456789', 'tuanpaph35819@fpt.edu.vn', '123456789012', 'avatar1.jpg', NULL, 1),
+    (1, 'nhanvien1', 'password123', N'Trần Thị B', '1992-02-02', 0, '0987654321', 'nhanvien1@example.com', '123456789013', 'avatar2.jpg', NULL, 1),
+    (1, 'khachhang1', 'password123', N'Lê Văn C', '1995-03-03', 1, '0123987654', 'khachhang1@example.com', '123456789014', 'avatar3.jpg', NULL, 1),
+    (1, 'admin2', 'password123', N'Phạm Văn D', '1985-04-04', 1, '0123456780', 'admin2@example.com', '123456789015', 'avatar4.jpg', NULL, 1),
+    (2, 'nhanvien2', 'password123', N'Nguyễn Thị E', '1993-05-05', 0, '0123456790', 'nhanvien2@example.com', '123456789016', 'avatar5.jpg', NULL, 1);
 --INSERT MauSac
 INSERT INTO MauSac (MaMau, TenMau, MoTa, NgayCapNhat)
 VALUES 
@@ -351,3 +351,30 @@ VALUES
     (N'M7', N'Màu Hồng', N'Màu hồng nhẹ nhàng, biểu tượng của tình yêu và sự ngọt ngào.', NULL),
     (N'M8', N'Màu Trắng', N'Màu trắng tinh khiết, đại diện cho sự thuần khiết và đơn giản.', NULL),
     (N'M9', N'Màu Đen', N'Màu đen mạnh mẽ, thể hiện sự bí ẩn và thanh lịch.', NULL);
+
+--INSERT KichThuoc
+INSERT INTO KichThuoc (MaKichThuoc, TenKichThuoc, NguoiTao, TrangThai, MoTa)
+VALUES
+('S', N'Nhỏ (S)', N'Admin', N'Hoạt động', N'Kích thước nhỏ, dành cho người có vòng đầu nhỏ'),
+('M', N'Vừa (M)', N'Admin', N'Hoạt động', N'Kích thước vừa, phù hợp cho nhiều người'),
+('L', N'Lớn (L)', N'Admin', N'Hoạt động', N'Kích thước lớn, dành cho người có vòng đầu lớn'),
+('XL', N'Cực Lớn (XL)', N'Admin', N'Hoạt động', N'Kích thước cực lớn, dành cho người có vòng đầu rất lớn'),
+('XXL', N'Siêu Lớn (XXL)', N'Admin', N'Hoạt động', N'Kích thước siêu lớn, phù hợp cho người có vòng đầu lớn nhất');
+
+--INSERT LoaiMu
+INSERT INTO LoaiMu (MaLoai, MoTa, TenLoaiMu, NguoiTao, TrangThai)
+VALUES
+('MBH01', N'Mũ bảo hiểm nửa đầu, thường dùng cho người lái xe máy trong đô thị', N'Mũ bảo hiểm nửa đầu', N'Admin', N'Hoạt động'),
+('MBH02', N'Mũ bảo hiểm cả đầu, bao phủ toàn bộ phần đầu, thường dùng cho những người đi xe phân khối lớn', N'Mũ bảo hiểm cả đầu', N'Admin', N'Hoạt động'),
+('MBH03', N'Mũ bảo hiểm 3/4 đầu, bảo vệ phần lớn đầu, phù hợp cho cả xe máy và xe phân khối lớn', N'Mũ bảo hiểm 3/4 đầu', N'Admin', N'Hoạt động'),
+('MBH04', N'Mũ bảo hiểm lật hàm, có thể chuyển đổi giữa mũ nửa đầu và mũ cả đầu bằng cách lật phần hàm lên', N'Mũ bảo hiểm lật hàm', N'Admin', N'Hoạt động'),
+('MBH05', N'Mũ bảo hiểm có kính, tích hợp kính chắn gió, giúp giảm bớt ánh sáng mặt trời và bụi bẩn', N'Mũ bảo hiểm có kính', N'Admin', N'Hoạt động');
+
+--INSERT ChatLieuVo
+INSERT INTO ChatLieuVo (MaChatLieu, TenChatLieuVo, TrangThai, NguoiTao, MoTa)
+VALUES
+('CLV01', N'Nhựa ABS', N'Hoạt động', N'Admin', N'Chất liệu nhựa ABS có khả năng chịu lực tốt, thường được sử dụng cho mũ bảo hiểm nửa đầu và mũ bảo hiểm 3/4 đầu.'),
+('CLV02', N'Nhựa Polycarbonate', N'Hoạt động', N'Admin', N'Nhựa Polycarbonate nhẹ, bền và có khả năng chịu va đập tốt, thường được sử dụng cho mũ bảo hiểm lật hàm và mũ bảo hiểm cả đầu.'),
+('CLV03', N'Kim loại hợp kim', N'Hoạt động', N'Admin', N'Chất liệu kim loại hợp kim thường dùng cho các mũ bảo hiểm phân khối lớn, cung cấp sự bảo vệ vượt trội.'),
+('CLV04', N'Vải tổng hợp', N'Hoạt động', N'Admin', N'Vải tổng hợp được sử dụng cho phần lót trong của mũ bảo hiểm, giúp thấm hút mồ hôi và mang lại cảm giác thoải mái.'),
+('CLV05', N'Carbon', N'Hoạt động', N'Admin', N'Chất liệu carbon siêu nhẹ và bền, được sử dụng cho mũ bảo hiểm cao cấp, có khả năng chống va đập cực tốt.');
