@@ -378,3 +378,65 @@ VALUES
 ('CLV03', N'Kim loại hợp kim', N'Hoạt động', N'Admin', N'Chất liệu kim loại hợp kim thường dùng cho các mũ bảo hiểm phân khối lớn, cung cấp sự bảo vệ vượt trội.'),
 ('CLV04', N'Vải tổng hợp', N'Hoạt động', N'Admin', N'Vải tổng hợp được sử dụng cho phần lót trong của mũ bảo hiểm, giúp thấm hút mồ hôi và mang lại cảm giác thoải mái.'),
 ('CLV05', N'Carbon', N'Hoạt động', N'Admin', N'Chất liệu carbon siêu nhẹ và bền, được sử dụng cho mũ bảo hiểm cao cấp, có khả năng chống va đập cực tốt.');
+
+--INSERT SanPham
+
+INSERT INTO SanPham (ID_SanPhamChiTiet, Ten, TrangThai, MoTa) VALUES
+(1, 'Mũ bảo hiểm 3/4', 'Còn hàng', 'Mũ bảo hiểm 3/4 kiểu dáng thời trang, phù hợp cho xe máy'),
+(2, 'Mũ bảo hiểm fullface', 'Còn hàng', 'Mũ bảo hiểm fullface bảo vệ toàn diện, thích hợp cho đi phượt'),
+(3, 'Mũ bảo hiểm nửa đầu', 'Còn hàng', 'Mũ bảo hiểm nửa đầu nhẹ nhàng, thoáng mát cho mùa hè'),
+(4, 'Mũ bảo hiểm trẻ em', 'Còn hàng', 'Mũ bảo hiểm dành cho trẻ em, an toàn và đáng yêu'),
+(5, 'Mũ bảo hiểm thể thao', 'Còn hàng', 'Mũ bảo hiểm thể thao chuyên dụng cho các môn thể thao mạo hiểm'),
+(6, 'Mũ bảo hiểm phân khối lớn', 'Còn hàng', 'Mũ bảo hiểm dành cho xe phân khối lớn, chất liệu cao cấp'),
+(7, 'Mũ bảo hiểm kết hợp', 'Còn hàng', 'Mũ bảo hiểm kết hợp, có thể chuyển đổi giữa 3/4 và fullface');
+
+--INSERT SanPhamChiTiet
+
+INSERT INTO SanPhamChiTiet (ID_SP, ID_ThuongHieu, ID_ChatLieuVo, ID_LoaiMu, ID_KichThuoc, ID_KhuyenMai, ID_LoaiKinh, ID_ChatLieuDem, ID_MauSac, SoLuong, MoTaChiTiet, TrangThai, NguoiTao, NguoiCapNhat, XuatXu) VALUES
+(1, 1, 1, 1, 1, NULL, 1, 1, 1, 100, 'Mũ bảo hiểm 3/4, chất liệu nhựa cao cấp, nhẹ và thoáng khí.', 'Còn hàng', 'Nguyen Van A', NULL, 'Việt Nam'),
+(1, 2, 1, 2, 2, NULL, 2, 1, 2, 50, 'Mũ bảo hiểm fullface với thiết kế hiện đại, bảo vệ tối đa.', 'Còn hàng', 'Nguyen Van B', NULL, 'Việt Nam'),
+(1, 3, 2, 1, 3, NULL, 1, 2, 3, 200, 'Mũ bảo hiểm nửa đầu, thích hợp cho đi lại trong thành phố.', 'Còn hàng', 'Nguyen Van C', NULL, 'Việt Nam'),
+(1, 4, 1, 3, 2, 1, 1, 1, 4, 150, 'Mũ bảo hiểm dành cho trẻ em, an toàn và phong cách.', 'Còn hàng', 'Nguyen Van D', NULL, 'Việt Nam'),
+(1, 5, 1, 4, 3, 1, 1, 1, 5, 80, 'Mũ bảo hiểm thể thao chuyên dụng cho các môn thể thao mạo hiểm.', 'Còn hàng', 'Nguyen Van E', NULL, 'Việt Nam'),
+(1, 6, 2, 2, 1, NULL, 1, 2, 6, 60, 'Mũ bảo hiểm phân khối lớn, chất lượng cao và thời trang.', 'Còn hàng', 'Nguyen Van F', NULL, 'Việt Nam'),
+(1, 7, 1, 2, 2, 1, 1, 1, 7, 90, 'Mũ bảo hiểm kết hợp, có thể chuyển đổi giữa 3/4 và fullface.', 'Còn hàng', 'Nguyen Van G', NULL, 'Việt Nam');
+
+--INSERT ThuongHieu
+
+INSERT INTO ThuongHieu (TenThuongHieu, MoTa) VALUES
+('Yamaha', N'Thương hiệu nổi tiếng chuyên cung cấp mũ bảo hiểm thể thao và đi phượt, chất lượng cao.'),
+('HJC', N'Thương hiệu hàng đầu thế giới trong lĩnh vực mũ bảo hiểm fullface và mũ bảo hiểm nửa đầu.'),
+('Shoei', N'Thương hiệu Nhật Bản chuyên sản xuất mũ bảo hiểm cao cấp, nổi bật với thiết kế an toàn.'),
+('LS2', N'Thương hiệu cung cấp các loại mũ bảo hiểm thời trang và thể thao, phù hợp cho giới trẻ.'),
+('BOSCH', N'Thương hiệu chuyên sản xuất mũ bảo hiểm cho trẻ em với thiết kế an toàn và ngộ nghĩnh.'),
+('KYT', N'Thương hiệu cung cấp mũ bảo hiểm chất lượng với nhiều loại mẫu mã và kích thước khác nhau.'),
+('Royal Enfield', N'Thương hiệu nổi tiếng về xe máy phân khối lớn, cũng sản xuất mũ bảo hiểm phong cách cổ điển.');
+
+-- INSERT ChatLieuDem
+INSERT INTO ChatLieuDem (MaChatLieu, TenChatLieuDem, TrangThai, NguoiTao, MoTa) VALUES
+(N'CLD001', N'Bọt EPS', N'Còn hàng', N'Nguyen Van A', N'Chất liệu đệm nhẹ, có khả năng hấp thụ va chạm tốt, thường được sử dụng trong mũ bảo hiểm.'),
+(N'CLD002', N'Đệm vải thấm hút', N'Còn hàng', N'Nguyen Van B', N'Chất liệu vải mềm mại, thấm hút mồ hôi, tạo cảm giác thoải mái cho người dùng.'),
+(N'CLD003', N'Đệm gel', N'Còn hàng', N'Nguyen Van C', N'Chất liệu gel giúp giảm lực tác động, bảo vệ đầu an toàn hơn.'),
+(N'CLD004', N'Đệm xốp PU', N'Còn hàng', N'Nguyen Van D', N'Chất liệu xốp PU có độ đàn hồi cao, hỗ trợ tốt trong việc giảm chấn.'),
+(N'CLD005', N'Đệm chống sốc', N'Còn hàng', N'Nguyen Van E', N'Chất liệu đặc biệt được thiết kế để chống lại lực va chạm mạnh.'),
+(N'CLD006', N'Bọt polyurethane', N'Còn hàng', N'Nguyen Van F', N'Chất liệu bọt polyurethane có khả năng chịu lực và độ bền cao.'),
+(N'CLD007', N'Chất liệu thông gió', N'Còn hàng', N'Nguyen Van G', N'Chất liệu được thiết kế để cải thiện khả năng thông gió, giữ cho đầu luôn mát mẻ.');
+
+--INSET LoaiKinh
+INSERT INTO LoaiKinh (MaLoaiKinh, TenLoaiKinh, TrangThai, NguoiTao, MoTa) VALUES
+(N'LK001', N'Kính trong suốt', N'Còn hàng', N'Nguyen Van A', N'Kính trong suốt cho tầm nhìn rõ ràng, thường dùng cho các loại mũ bảo hiểm.'),
+(N'LK002', N'Kính chống UV', N'Còn hàng', N'Nguyen Van B', N'Kính có khả năng chống lại tia UV, bảo vệ mắt người dùng khỏi tác hại của ánh sáng mặt trời.'),
+(N'LK003', N'Kính mờ', N'Còn hàng', N'Nguyen Van C', N'Kính mờ giúp giảm độ chói và tạo cảm giác thoải mái cho người sử dụng trong thời tiết nắng gắt.'),
+(N'LK004', N'Kính đổi màu', N'Còn hàng', N'Nguyen Van D', N'Kính có khả năng tự động đổi màu theo cường độ ánh sáng, thích hợp cho việc sử dụng ngoài trời.'),
+(N'LK005', N'Kính chống trầy xước', N'Còn hàng', N'Nguyen Van E', N'Kính được xử lý đặc biệt để chống trầy xước, giữ cho kính luôn trong tình trạng tốt.'),
+(N'LK006', N'Kính gương', N'Còn hàng', N'Nguyen Van F', N'Kính gương giúp giảm độ chói và tăng cường độ thẩm mỹ cho mũ bảo hiểm.'),
+(N'LK007', N'Kính chống hơi nước', N'Còn hàng', N'Nguyen Van G', N'Kính có khả năng chống ngưng tụ hơi nước, đảm bảo tầm nhìn rõ ràng trong mọi điều kiện thời tiết.');
+
+
+--INSERT KhuyenMai
+INSERT INTO KhuyenMai (MaKhuyenMai, TenKhuyenMai, GiaTriKhuyenMai, NgayBatDau, NgayKetThuc, PhuongThucKhuyenMai, DieuKienKhuyenMai, TrangThai, NguoiTao, NgayTao) VALUES
+(N'KM001', N'Giảm 10% cho tất cả mũ bảo hiểm', 10.00, '2024-10-01', '2024-10-31', N'Giảm giá trực tiếp', N'Mua 1 mũ bảo hiểm bất kỳ', N'Còn hiệu lực', N'Nguyen Van A', GETDATE()),
+(N'KM002', N'Mua 2 tặng 1', 100.00, '2024-10-15', '2024-11-15', N'Tặng sản phẩm', N'Mua 2 mũ bảo hiểm bất kỳ', N'Còn hiệu lực', N'Nguyen Van B', GETDATE()),
+(N'KM003', N'Tặng kèm mũ bảo hiểm cho đơn hàng trên 500k', 50.00, '2024-10-20', '2024-11-20', N'Tặng sản phẩm', N'Đơn hàng trên 500.000 VNĐ', N'Còn hiệu lực', N'Nguyen Van C', GETDATE()),
+(N'KM004', N'Giảm giá theo số lượng', 15.00, '2024-11-01', '2024-12-01', N'Giảm giá trực tiếp', N'Mua từ 3 chiếc trở lên', N'Chưa bắt đầu', N'Nguyen Van D', GETDATE());
+
