@@ -89,7 +89,6 @@ CREATE TABLE GioHangChiTiet
 CREATE TABLE Voucher
 (
     ID                 BIGINT         NOT NULL PRIMARY KEY IDENTITY(1, 1), -- Khóa chính, tự động tăng từ 1
-    ID_HoaDon          BIGINT         NOT NULL,                            -- Khóa ngoại liên kết với bảng HoaDon
     MaVoucher          VARCHAR(50)    NOT NULL,                            -- Mã Voucher (không được để NULL)
     TenVoucher         NVARCHAR(255) NOT NULL,                             -- Tên Voucher (không được để NULL)
     NgayBatDau         DATETIME       NOT NULL,                            -- Ngày bắt đầu hiệu lực của voucher
@@ -411,15 +410,14 @@ VALUES ('CLV01', N'Nhựa ABS', N'Hoạt động', N'Admin',
         N'Chất liệu carbon siêu nhẹ và bền, được sử dụng cho mũ bảo hiểm cao cấp, có khả năng chống va đập cực tốt.');
 
 --INSERT SanPham
-
 INSERT INTO SanPham (ID_SanPhamChiTiet, Ten, TrangThai, MoTa)
-VALUES (1, 'Mũ bảo hiểm 3/4', 'Còn hàng', 'Mũ bảo hiểm 3/4 kiểu dáng thời trang, phù hợp cho xe máy'),
-       (2, 'Mũ bảo hiểm fullface', 'Còn hàng', 'Mũ bảo hiểm fullface bảo vệ toàn diện, thích hợp cho đi phượt'),
-       (3, 'Mũ bảo hiểm nửa đầu', 'Còn hàng', 'Mũ bảo hiểm nửa đầu nhẹ nhàng, thoáng mát cho mùa hè'),
-       (4, 'Mũ bảo hiểm trẻ em', 'Còn hàng', 'Mũ bảo hiểm dành cho trẻ em, an toàn và đáng yêu'),
-       (5, 'Mũ bảo hiểm thể thao', 'Còn hàng', 'Mũ bảo hiểm thể thao chuyên dụng cho các môn thể thao mạo hiểm'),
-       (6, 'Mũ bảo hiểm phân khối lớn', 'Còn hàng', 'Mũ bảo hiểm dành cho xe phân khối lớn, chất liệu cao cấp'),
-       (7, 'Mũ bảo hiểm kết hợp', 'Còn hàng', 'Mũ bảo hiểm kết hợp, có thể chuyển đổi giữa 3/4 và fullface');
+VALUES (1, N'Mũ bảo hiểm 3/4', N'Còn hàng', N'Mũ bảo hiểm 3/4 kiểu dáng thời trang, phù hợp cho xe máy'),
+       (2, N'Mũ bảo hiểm fullface', N'Còn hàng', N'Mũ bảo hiểm fullface bảo vệ toàn diện, thích hợp cho đi phượt'),
+       (3, N'Mũ bảo hiểm nửa đầu', N'Còn hàng', N'Mũ bảo hiểm nửa đầu nhẹ nhàng, thoáng mát cho mùa hè'),
+       (4, N'Mũ bảo hiểm trẻ em', N'Còn hàng', N'Mũ bảo hiểm dành cho trẻ em, an toàn và đáng yêu'),
+       (5, N'Mũ bảo hiểm thể thao', N'Còn hàng', N'Mũ bảo hiểm thể thao chuyên dụng cho các môn thể thao mạo hiểm'),
+       (6, N'Mũ bảo hiểm phân khối lớn', N'Còn hàng', N'Mũ bảo hiểm dành cho xe phân khối lớn, chất liệu cao cấp'),
+       (7, N'Mũ bảo hiểm kết hợp', N'Còn hàng', N'Mũ bảo hiểm kết hợp, có thể chuyển đổi giữa 3/4 và fullface');
 
 --INSERT SanPhamChiTiet
 
@@ -499,3 +497,13 @@ VALUES (N'KM001', N'Giảm 10% cho tất cả mũ bảo hiểm', 10.00, '2024-10
        (N'KM004', N'Giảm giá theo số lượng', 15.00, '2024-11-01', '2024-12-01', N'Giảm giá trực tiếp',
         N'Mua từ 3 chiếc trở lên', N'Chưa bắt đầu', N'Nguyen Van D', GETDATE());
 
+--INSERT Voucher
+
+INSERT INTO Voucher
+    (MaVoucher, TenVoucher, NgayBatDau, NgayKetThuc, GiaTriVoucher, GiaTriVoucherToiDa, GioiHanSoLuong, TrangThai, MoTa)
+VALUES
+    ('MU2024A', N'Giảm giá mũ bảo hiểm mùa xuân', '2024-02-01', '2024-03-01', 50000, 30000, 100, N'Hoạt động', N'Giảm giá cho tất cả các loại mũ bảo hiểm chính hãng'),
+    ('MU2024B', N'Khuyến mãi mũ bảo hiểm - Mua 1 tặng 1', '2024-04-10', '2024-05-10', 100000, 50000, 50, N'Hoạt động', N'Áp dụng khi mua một mũ bảo hiểm, tặng thêm một mũ bảo hiểm tương đương'),
+    ('MU2024C', N'Giảm giá mũ bảo hiểm mùa hè', '2024-06-01', '2024-07-01', 80000, 40000, 150, N'Hoạt động', N'Giảm giá cho mũ bảo hiểm bảo hành 1 năm'),
+    ('MU2024D', N'Ưu đãi mũ bảo hiểm mùa mưa', '2024-09-01', '2024-09-30', 120000, 60000, 75, N'Đang chờ', N'Khuyến mãi cho mũ bảo hiểm chống nước mùa mưa'),
+    ('MU2024E', N'Giảm giá cuối năm - Mũ bảo hiểm', '2024-12-01', '2024-12-31', 150000, 75000, 200, N'Hoạt động', N'Áp dụng cho tất cả các sản phẩm mũ bảo hiểm trong tháng 12');
