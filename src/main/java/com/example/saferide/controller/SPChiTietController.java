@@ -88,7 +88,6 @@ public class SPChiTietController {
             existingSPChiTiet.setIdChatLieuDem(spChiTiet.getIdChatLieuDem());
             existingSPChiTiet.setIdMauSac(spChiTiet.getIdMauSac());
             existingSPChiTiet.setSl(spChiTiet.getSl());
-            existingSPChiTiet.setMoTaCT(spChiTiet.getMoTaCT());
             existingSPChiTiet.setTt(spChiTiet.getTt());
             existingSPChiTiet.setXuatXu(spChiTiet.getXuatXu());
 //            existingSPChiTiet.setDonGia(spChiTiet.getDonGia());

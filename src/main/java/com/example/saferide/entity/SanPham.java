@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,18 +17,22 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "sanpham")
 public class SanPham {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-//    @Column(name = "id_sanphamchitiet")
-//    private String idSPCT;
+    @Column(name = "id_sanphamchitiet")
+    private String idSPCT;
 
     @Column(name = "ten")
     private String ten;
 
     @Column(name = "mota")
     private String moTa;
+
+    @Column(name = "Gia")
+    private BigDecimal gia;
 
     @Column(name = "trangthai")
     private String tt;

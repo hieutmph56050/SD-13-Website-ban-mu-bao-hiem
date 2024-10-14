@@ -35,8 +35,9 @@ CREATE TABLE VaiTro
 CREATE TABLE SanPham
 (
     ID                BIGINT NOT NULL PRIMARY KEY IDENTITY(1, 1), -- Khóa chính, tự động tăng từ 1
-    ID_SanPhamChiTiet BIGINT NOT NULL,                            -- Khóa ngoại liên kết với bảng SanPhamChiTiet
-    Ten               NVARCHAR(255) NOT NULL,                     -- Tên sản phẩm (không được để NULL)
+    ID_SanPhamChiTiet BIGINT NOT NULL,							-- Khóa ngoại liên kết với bảng SanPhamChiTiet
+    Ten               NVARCHAR(255) NOT NULL,
+	Gia DECIMAL(10, 2) NOT NULL,-- Tên sản phẩm (không được để NULL)
     TrangThai         VARCHAR(50),                                -- Trạng thái sản phẩm (có thể để NULL)
     MoTa              NVARCHAR(1000),                             -- Mô tả sản phẩm (có thể để NULL)
 );
@@ -52,9 +53,10 @@ CREATE TABLE SanPhamChiTiet
     ID_KhuyenMai   BIGINT,                                                         -- Khóa ngoại liên kết với bảng KhuyenMai
     ID_LoaiKinh    BIGINT,                                                         -- Khóa ngoại liên kết với bảng KhuyenMai
     ID_ChatLieuDem BIGINT,                                                         -- Khóa ngoại liên kết với bảng ChatLieuDem
-    ID_MauSac      BIGINT,                                                         -- Khóa ngoại liên kết với bảng MauSac
+    ID_MauSac      BIGINT,
+	Ma varchar(100) , -- Khóa ngoại liên kết với bảng MauSac
     SoLuong        INT                        NOT NULL,                            -- Số lượng sản phẩm (không được để NULL)
-    MoTaChiTiet    NVARCHAR(1000),                                                 -- Mô tả chi tiết sản phẩm (có thể để NULL)
+    Gia DECIMAL(10, 2) NOT NULL,                                                
     TrangThai      VARCHAR(50)                NOT NULL,                            -- Trạng thái sản phẩm (không được để NULL)
     NguoiTao       NVARCHAR(255) NOT NULL,                                         -- Người tạo sản phẩm (không được để NULL)
     NgayTao        DATETIME DEFAULT GETDATE() NOT NULL,                            -- Ngày tạo (tự động lấy thời gian hiện tại)
@@ -114,26 +116,15 @@ CREATE TABLE ThanhToanChiTiet
     NguoiCapNhat  NVARCHAR(255),                                                  -- Người cập nhật chi tiết thanh toán (có thể để NULL)
 );
 
-CREATE TABLE HoaDon
-(
+CREATE TABLE HoaDon (
     ID            BIGINT                     NOT NULL PRIMARY KEY IDENTITY(1, 1), -- Khóa chính, tự động tăng từ 1
-    MaHoaDon      NVARCHAR(50) NOT NULL,                                          -- Mã hóa đơn (không được để NULL)
-    ID_TaiKhoan   BIGINT                     NOT NULL,                            -- Khóa ngoại liên kết với bảng TaiKhoan
-    ID_Voucher    BIGINT,                                                         -- Khóa ngoại liên kết với bảng Voucher (có thể để NULL)
-    ID_ThanhToan  BIGINT                     NOT NULL,                            -- Khóa ngoại liên kết với bảng ThanhToan
-    NgayThanhToan DATETIME                   NOT NULL,                            -- Ngày thanh toán (không được để NULL)
-    NgayGiaoHang  DATETIME,                                                       -- Ngày giao hàng (có thể để NULL)
-    NgayNhan      DATETIME,                                                       -- Ngày nhận hàng (có thể để NULL)
-    GiaGiam       DECIMAL(18, 2),                                                 -- Giá trị giảm từ voucher hoặc khuyến mãi (có thể để NULL)
-    TongTien      DECIMAL(18, 2)             NOT NULL,                            -- Tổng tiền của hóa đơn (không được để NULL)
-    SoTienDaTra   DECIMAL(18, 2)             NOT NULL,                            -- Số tiền đã thanh toán (không được để NULL)
-    GhiChu        NVARCHAR(1000),                                                 -- Ghi chú (có thể để NULL)
-    DiaChi        NVARCHAR(255) NOT NULL,                                         -- Địa chỉ giao hàng (không được để NULL)
-    TrangThai     VARCHAR(50)                NOT NULL,                            -- Trạng thái của hóa đơn (không được để NULL)
-    NguoiTao      NVARCHAR(255) NOT NULL,                                         -- Người tạo hóa đơn (không được để NULL)
-    NgayTao       DATETIME DEFAULT GETDATE() NOT NULL,                            -- Ngày tạo hóa đơn (tự động lấy thời gian hiện tại)
-    NguoiCapNhat  NVARCHAR(255),                                                  -- Người cập nhật hóa đơn (có thể để NULL)
-    NgayCapNhat   DATETIME,                                                       -- Ngày cập nhật hóa đơn (có thể để NULL)
+    NgayTao DATETIME DEFAULT CURRENT_TIMESTaMP NOT NULL, -- Ngày tạo hóa đơn
+    ID_TaiKhoan INT NOT NULL,
+	ID_Voucher INT ,
+	MaHoaDon VARCHAR(100),
+    TongTien DECIMAL(10, 2) NOT NULL,                   -- Tổng tiền hóa đơn
+    TrangThai NVARCHAR(50) NOT NULL,                             -- Trạng thái thanh toán
+    DiaChi VARCHAR(255) NOT NULL,                        -- Địa chỉ giao hàng
 );
 
 CREATE TABLE HoaDonChiTiet
@@ -145,12 +136,13 @@ CREATE TABLE HoaDonChiTiet
     TongTien    DECIMAL(18, 2)             NOT NULL,                            -- Tổng tiền cho chi tiết hóa đơn (không được để NULL)
     SoLuong     INT                        NOT NULL,                            -- Số lượng sản phẩm (không được để NULL)
     GhiChu      NVARCHAR(1000),                                                 -- Ghi chú (có thể để NULL)
-    TrangThai   VARCHAR(50)                NOT NULL,                            -- Trạng thái của chi tiết hóa đơn (không được để NULL)
+    TrangThai   VARCHAR(50)                NOT NULL,   
+	Gia		DECIMAL(10, 2) NOT NULL, 											-- Trạng thái của chi tiết hóa đơn (không được để NULL)
     NgayTao     DATETIME DEFAULT GETDATE() NOT NULL,                            -- Ngày tạo chi tiết hóa đơn (tự động lấy thời gian hiện tại)
     NgayCapNhat DATETIME,                                                       -- Ngày cập nhật chi tiết hóa đơn (có thể để NULL)
 );
 
-CREATE TABLE KhuyenMai
+DROP TABLE HoaDonChiTiet
 (
     ID                  BIGINT                     NOT NULL PRIMARY KEY IDENTITY(1, 1), -- Khóa chính, tự động tăng từ 1
     MaKhuyenMai         NVARCHAR(50) NOT NULL,                                          -- Mã khuyến mãi (không được để NULL)
@@ -397,27 +389,22 @@ VALUES ('MBH01', N'Mũ bảo hiểm nửa đầu, thường dùng cho người l
         N'Mũ bảo hiểm có kính', N'Admin', N'Hoạt động');
 
 --INSERT ChatLieuVo
-INSERT INTO ChatLieuVo (MaChatLieu, TenChatLieuVo, TrangThai, NguoiTao, MoTa)
-VALUES ('CLV01', N'Nhựa ABS', N'Hoạt động', N'Admin',
-        N'Chất liệu nhựa ABS có khả năng chịu lực tốt, thường được sử dụng cho mũ bảo hiểm nửa đầu và mũ bảo hiểm 3/4 đầu.'),
-       ('CLV02', N'Nhựa Polycarbonate', N'Hoạt động', N'Admin',
-        N'Nhựa Polycarbonate nhẹ, bền và có khả năng chịu va đập tốt, thường được sử dụng cho mũ bảo hiểm lật hàm và mũ bảo hiểm cả đầu.'),
-       ('CLV03', N'Kim loại hợp kim', N'Hoạt động', N'Admin',
-        N'Chất liệu kim loại hợp kim thường dùng cho các mũ bảo hiểm phân khối lớn, cung cấp sự bảo vệ vượt trội.'),
-       ('CLV04', N'Vải tổng hợp', N'Hoạt động', N'Admin',
-        N'Vải tổng hợp được sử dụng cho phần lót trong của mũ bảo hiểm, giúp thấm hút mồ hôi và mang lại cảm giác thoải mái.'),
-       ('CLV05', N'Carbon', N'Hoạt động', N'Admin',
-        N'Chất liệu carbon siêu nhẹ và bền, được sử dụng cho mũ bảo hiểm cao cấp, có khả năng chống va đập cực tốt.');
+INSERT INTO SanPhamChiTiet (ID_SP, ID_ThuongHieu, ID_ChatLieuVo, ID_LoaiMu, ID_KichThuoc, ID_KhuyenMai, ID_LoaiKinh, ID_ChatLieuDem, ID_MauSac, SoLuong, Gia, TrangThai, NguoiTao, NguoiCapNhat, XuatXu)
+VALUES 
+(1, 1, 1, 1, 1, NULL, 1, NULL, 1, 50, 2500000.00, N'Còn hàng', N'Nguyễn Văn A', NULL, N'Việt Nam'), -- Mũ bảo hiểm A
+(1, 2, 2, 2, 1, NULL, 2, NULL, 2, 30, 1500000.00, N'Còn hàng', N'Trần Thị B', NULL, N'Việt Nam'), -- Mũ bảo hiểm B
+(1, 3, 3, 3, 1, NULL, 3, NULL, 3, 20, 3000000.00, N'Hết hàng', N'Lê Văn C', NULL, N'Việt Nam'); -- Mũ bảo hiểm C
 
---INSERT SanPham
-INSERT INTO SanPham (ID_SanPhamChiTiet, Ten, TrangThai, MoTa)
-VALUES (1, N'Mũ bảo hiểm 3/4', N'Còn hàng', N'Mũ bảo hiểm 3/4 kiểu dáng thời trang, phù hợp cho xe máy'),
-       (2, N'Mũ bảo hiểm fullface', N'Còn hàng', N'Mũ bảo hiểm fullface bảo vệ toàn diện, thích hợp cho đi phượt'),
-       (3, N'Mũ bảo hiểm nửa đầu', N'Còn hàng', N'Mũ bảo hiểm nửa đầu nhẹ nhàng, thoáng mát cho mùa hè'),
-       (4, N'Mũ bảo hiểm trẻ em', N'Còn hàng', N'Mũ bảo hiểm dành cho trẻ em, an toàn và đáng yêu'),
-       (5, N'Mũ bảo hiểm thể thao', N'Còn hàng', N'Mũ bảo hiểm thể thao chuyên dụng cho các môn thể thao mạo hiểm'),
-       (6, N'Mũ bảo hiểm phân khối lớn', N'Còn hàng', N'Mũ bảo hiểm dành cho xe phân khối lớn, chất liệu cao cấp'),
-       (7, N'Mũ bảo hiểm kết hợp', N'Còn hàng', N'Mũ bảo hiểm kết hợp, có thể chuyển đổi giữa 3/4 và fullface');
+INSERT INTO SanPham (ID_SanPhamChiTiet, Ten, Gia, TrangThai, MoTa)
+VALUES 
+    (1, N'Mũ bảo hiểm 1', 150.00, N'Còn hàng', N'Mũ bảo hiểm chất lượng cao, đạt tiêu chuẩn an toàn.'),
+    (1, N'Mũ bảo hiểm 2', 200.00, N'Còn hàng', N'Mũ bảo hiểm thời trang, phong cách trẻ trung.'),
+    (2, N'Mũ bảo hiểm 3', 175.50, N'Hết hàng', N'Mũ bảo hiểm thể thao, thoải mái khi đội.'),
+    (2, N'Mũ bảo hiểm 4', 250.00, N'Còn hàng', N'Mũ bảo hiểm tiện dụng cho đi lại hàng ngày.'),
+    (3, N'Mũ bảo hiểm 5', 300.00, N'Còn hàng', N'Mũ bảo hiểm trẻ em, an toàn và dễ thương.'),
+    (3, N'Mũ bảo hiểm 6', 120.00, N'Hết hàng', N'Mũ bảo hiểm mini, thích hợp cho xe đạp.'),
+    (4, N'Mũ bảo hiểm 7', 180.00, N'Còn hàng', N'Mũ bảo hiểm đa năng, cho mọi loại xe.'),
+    (4, N'Mũ bảo hiểm 8', 220.00, N'Còn hàng', N'Mũ bảo hiểm cao cấp, thiết kế sang trọng.');
 
 --INSERT SanPhamChiTiet
 

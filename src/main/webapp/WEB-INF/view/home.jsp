@@ -26,5 +26,6 @@
     <div><a href="/khuyenmai/index/list">Khuyến mãi</a></div>
     <div><a href="/voucher/index/list">Voucher</a></div>
     <div><a href="/thanhtoan/index/list">Thanh toán</a></div>
+    <div><a href="/ban-hang/hien-thi">Bán hàng</a></div>
 </body>
 </html>

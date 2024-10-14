@@ -8,7 +8,9 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Getter
 @Setter
@@ -21,7 +23,7 @@ public class SPChiTiet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "maspct")
+    @Column(name = "ma")
     private String ma;
 
     @ManyToOne
@@ -62,12 +64,17 @@ public class SPChiTiet {
 
     @Column(name = "soluong")
     private int sl;
+//
+//    @Column(name = "motachitiet")
+//    private String moTaCT;
 
-    @Column(name = "motachitiet")
-    private String moTaCT;
+    @Column(name = "Gia",  precision = 20, scale = 0)
+    private int donGia;
 
-//    @Column(name = "dongia",  precision = 20, scale = 0)
-//    private BigDecimal donGia;
+    public String getFormattedGia() {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        return formatter.format(donGia);
+    }
 
     @Column(name = "trangthai")
     private String tt;
