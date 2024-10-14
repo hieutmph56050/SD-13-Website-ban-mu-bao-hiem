@@ -52,7 +52,6 @@ public class ChatLieuVoController {
             // Giữ nguyên ngaytao
             // Cập nhật ngaycapnhat
             existingChatLieuVo.setNgayCapNhat(LocalDateTime.now());
-
             service.update(existingChatLieuVo);
         }
         return "redirect:/chatlieuvo/index/list";
