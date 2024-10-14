@@ -8,7 +8,9 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Getter
 @Setter
@@ -33,13 +35,21 @@ public class HoaDonChiTiet {
     private String ma;
 
     @Column(name = "tongtien", precision = 18, scale = 2)
-    private BigDecimal tongTien;
+    private int tongTien;
 
     @Column(name = "soluong")
     private int sl;
 
     @Column(name = "ghichu")
     private String ghiChu;
+
+    @Column(name = "Gia")
+    private int gia;
+
+    public String getFormattedGia() {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        return formatter.format(gia);
+    }
 
     @Column(name = "ngaytao")
     private LocalDateTime ngayTao;

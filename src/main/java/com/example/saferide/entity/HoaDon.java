@@ -7,8 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Getter
 @Setter
@@ -24,7 +27,7 @@ public class HoaDon {
     @Column(name = "mahoadon")
     private String ma;
 
-    @JoinColumn(name = "id_taikhoan", referencedColumnName = "id")
+    @JoinColumn(name = "ID_TaiKhoan", referencedColumnName = "id")
     @ManyToOne
     private TaiKhoan idTaiKhoan;
 
@@ -32,48 +35,24 @@ public class HoaDon {
     @ManyToOne
     private Voucher idVoucher;
 
-    @Column(name = "ngaygiaohang")
-    private LocalDate ngayGiaoHang;
-
-    @Column(name = "ngaynhan")
-    private LocalDate ngayNhan;
-
-    @Column(name = "giagiam")
-    private int giaGiam;
-
     @Column(name = "tongtien")
     private int tongTien;
 
-    @Column(name = "sotiendatra")
-    private int soTienDaTra;
-
-    @Column(name = "ghichu")
-    private String ghiChu;
+    public String getFormattedGia() {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        return formatter.format(tongTien);
+    }
 
     @Column(name = "diachi")
     private String diaChi;
 
-    @Column(name = "nguoitao")
-    private String nguoiTao;
-
-    @Column(name = "nguoicapnhat")
-    private String nguoiCapNhat;
-
     @Column(name = "ngaytao")
     private LocalDateTime ngayTao;
 
-//    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    @Column(name = "ngaycapnhat")
-    private LocalDateTime ngayCapNhat;
 
     @PrePersist
     protected void onCreate() {
         ngayTao = LocalDateTime.now(); // Gán thời gian hiện tại
-    }
-    @PreUpdate
-    protected void onUpdate() {
-        ngayCapNhat = LocalDateTime.now(); // Gán thời gian hiện tại khi cập nhật
     }
 
     @Column(name = "trangthai", columnDefinition = "BIT")
