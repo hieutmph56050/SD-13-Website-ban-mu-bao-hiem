@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -38,9 +39,10 @@ public class BanHangController {
     }
 
     @PostMapping("/them-hoa-don")
-    public String themHoaDon(HoaDon hoaDon) {
+    public String themHoaDon(HoaDon hoaDon, @RequestParam("tenKhachHang") String tenKhachHang
+            , @RequestParam("sdt") String sdt) {
         hoaDon.setNgayTao(LocalDateTime.now());
-        hoaDon.setTongTien(0);
+        hoaDon.setTongTien(new BigDecimal("0"));
         hoaDon.setTt("Chưa thanh toán");
         hoaDon.setDiaChi("SafeRide - Hà Nội");
         TaiKhoan taiKhoan = taiKhoanRepository.findById(6).orElse(null);
@@ -67,7 +69,7 @@ public class BanHangController {
     }
 
     @PostMapping("/them-san-pham")
-    public String themSanPham(Integer hoaDonId, Integer sanPhamId, int soLuong, Model model) {
+    public String themSanPham(Integer hoaDonId, Integer sanPhamId, BigDecimal soLuong, Model model) {
         // Retrieve the selected invoice
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
@@ -82,17 +84,26 @@ public class BanHangController {
         if (existingHDCT.isPresent()) {
             // If exists, update the quantity and total amount
             HoaDonChiTiet hdct = existingHDCT.get();
-            hdct.setSl(hdct.getSl() + soLuong);
-            hdct.setTongTien(hdct.getSl() * hdct.getGia());
+            BigDecimal currentQuantity = BigDecimal.valueOf(hdct.getSl());
+            hdct.setSl(currentQuantity.add(soLuong).intValue());
+
+            BigDecimal newTotal = spChiTiet.getDonGia().multiply(BigDecimal.valueOf(hdct.getSl()));
+            hdct.setTongTien(newTotal);
             hoaDonChiTietRepository.save(hdct);
         } else {
-            // If does not exist, create a new invoice detail
+            // Create a new invoice detail
             HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
             hoaDonChiTiet.setIdHoaDon(hoaDon);
             hoaDonChiTiet.setIdSPCT(spChiTiet);
-            hoaDonChiTiet.setSl(soLuong);
+            hoaDonChiTiet.setSl(soLuong.intValue());
             hoaDonChiTiet.setGia(spChiTiet.getDonGia());
-            hoaDonChiTiet.setTongTien(spChiTiet.getDonGia() * soLuong);
+
+            BigDecimal newTotal = spChiTiet.getDonGia().multiply(soLuong);
+            if (newTotal.compareTo(new BigDecimal("99999999.99")) > 0) {
+                model.addAttribute("error", "Tổng tiền vượt quá giới hạn cho phép.");
+                return selectInvoice(hoaDonId, model);
+            }
+            hoaDonChiTiet.setTongTien(newTotal);
 
             // Generate mã for the new invoice detail
             String maHDCT = "HDCT-" + hoaDon.getId() + "-" + (hoaDonChiTietRepository.countByHoaDonId(hoaDon.getId()) + 1);
@@ -111,18 +122,23 @@ public class BanHangController {
     }
 
 
+
+
     private void updateTotalAmount(HoaDon hoaDon) {
         List<HoaDonChiTiet> chiTietList = hoaDonChiTietRepository.findByHoaDonId(hoaDon.getId());
-        int totalAmount = chiTietList.stream()
-                .mapToInt(HoaDonChiTiet::getTongTien)
-                .sum();
+
+        // Sử dụng BigDecimal để tính tổng tiền
+        BigDecimal totalAmount = chiTietList.stream()
+                .map(HoaDonChiTiet::getTongTien)
+                .reduce(BigDecimal.ZERO, BigDecimal::add); // Cộng dồn các giá trị BigDecimal
 
         hoaDon.setTongTien(totalAmount);
         hoaDonRepository.save(hoaDon);
     }
 
-    @GetMapping("/xoa/hdct/{id}")
-    public String remove(@PathVariable Integer id, Integer hoaDonId) {
+
+    @GetMapping("/xoa/hdct/{id}/{hoaDonId}")
+    public String remove(@PathVariable Integer id, @PathVariable Integer hoaDonId) {
         // Check if the invoice detail exists
         HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn chi tiết không tồn tại"));
@@ -138,10 +154,13 @@ public class BanHangController {
         // Redirect to the invoice details page
         return "redirect:/ban-hang/chon-hoa-don?hoaDonId=" + hoaDonId;
     }
-
     @PostMapping("/thanh-toan")
-    public String thanhToan(@RequestParam Integer hoaDonId, @RequestParam int soTienKhachTra, Model model) {
+    public String thanhToan(@RequestParam(required = false) Integer hoaDonId, @RequestParam BigDecimal soTienKhachTra, Model model) {
         // Lấy hóa đơn dựa trên ID
+        if (hoaDonId == null) {
+            model.addAttribute("error", "Không tìm thấy ID hóa đơn. Vui lòng thử lại.");
+
+        }
 
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
@@ -157,10 +176,11 @@ public class BanHangController {
 
 
         // Kiểm tra số tiền khách trả
-        if (soTienKhachTra < hoaDon.getTongTien()) {
+        if (soTienKhachTra.compareTo(hoaDon.getTongTien()) < 0) {
             model.addAttribute("error", "Số tiền khách trả không đủ. Vui lòng kiểm tra lại.");
             return selectInvoice(hoaDonId, model);
         }
+
 
         // Nếu đủ, thực hiện thanh toán
         hoaDon.setTt("Đã thanh toán"); // Cập nhật trạng thái hóa đơn

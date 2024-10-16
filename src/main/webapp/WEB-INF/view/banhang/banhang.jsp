@@ -47,9 +47,36 @@
         <div class="row">
             <div class="col">
                 <h2>Danh sách Hóa Đơn</h2>
-                <form action="/ban-hang/them-hoa-don" method="post">
-                    <button type="submit" class="btn btn-primary">Tạo hóa đơn mới</button>
-                </form>
+                <!-- Button to open the modal for creating a new invoice -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customerModal">
+                    Tạo hóa đơn mới
+                </button>
+
+                <!-- Modal for customer input -->
+                <div class="modal fade" id="customerModal" tabindex="-1" aria-labelledby="customerModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="customerModalLabel">Thông tin khách hàng</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/ban-hang/them-hoa-don" method="post">
+                                    <div class="mb-3">
+                                        <label for="customerName" class="form-label">Tên Khách Hàng</label>
+                                        <input type="text" class="form-control" id="customerName" name="tenKhachHang" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="customerPhone" class="form-label">Số Điện Thoại</label>
+                                        <input type="text" class="form-control" id="customerPhone" name="sdt" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Tạo hóa đơn</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -77,7 +104,6 @@
                                                 ${hd.id == selectedHoaDonId ? 'Đang chọn' : 'Chọn'}
                                         </button>
                                     </form>
-
                                 </div>
                             </td>
                         </tr>
@@ -95,7 +121,7 @@
                         <th>Tên Sản Phẩm</th>
                         <th>Số Lượng</th>
                         <th>Đơn Giá</th>
-                        <th>Thành Tiền</th>
+                        <th>Tổng tiền</th>
                         <th>Thao tác</th>
                     </tr>
                     </thead>
@@ -107,9 +133,9 @@
                                 <td class="ellipsis">${hdct.idSPCT.idSanPham.ten}</td> <!-- Truncate long product names -->
                                 <td>${hdct.sl}</td>
                                 <td>${hdct.getFormattedGia()}</td>
-                                <td>${hdct.tongTien}</td>
+                                <td>${hdct.getFormattedTongTien()}</td>
                                 <td>
-                                    <a href="xoa/hdct/${hdct.id}?hoaDonId=${selectedHoaDonId}">
+                                    <a href="/ban-hang/xoa/hdct/${hdct.id}/${selectedHoaDonId}">
                                         <button class="btn btn-danger">Xóa</button>
                                     </a>
                                 </td>

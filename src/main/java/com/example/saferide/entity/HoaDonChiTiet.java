@@ -34,8 +34,13 @@ public class HoaDonChiTiet {
     @Column(name = "mahdct")
     private String ma;
 
-    @Column(name = "tongtien", precision = 18, scale = 2)
-    private int tongTien;
+    @Column(name = "tongtien", precision = 10, scale = 2)
+    private BigDecimal tongTien = BigDecimal.ZERO;
+
+    public String getFormattedTongTien() {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        return formatter.format(tongTien);
+    }
 
     @Column(name = "soluong")
     private int sl;
@@ -43,8 +48,8 @@ public class HoaDonChiTiet {
     @Column(name = "ghichu")
     private String ghiChu;
 
-    @Column(name = "Gia")
-    private int gia;
+    @Column(name = "Gia", precision = 18, scale = 2)
+    private BigDecimal gia = BigDecimal.ZERO;
 
     public String getFormattedGia() {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
