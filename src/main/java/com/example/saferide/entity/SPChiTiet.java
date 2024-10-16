@@ -68,13 +68,14 @@ public class SPChiTiet {
 //    @Column(name = "motachitiet")
 //    private String moTaCT;
 
-    @Column(name = "Gia",  precision = 20, scale = 0)
-    private int donGia;
+    @Column(name = "Gia", precision = 10, scale = 2)
+    private BigDecimal donGia;
 
     public String getFormattedGia() {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         return formatter.format(donGia);
     }
+
 
     @Column(name = "trangthai")
     private String tt;

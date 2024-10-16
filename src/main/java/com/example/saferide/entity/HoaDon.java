@@ -35,8 +35,8 @@ public class HoaDon {
     @ManyToOne
     private Voucher idVoucher;
 
-    @Column(name = "tongtien")
-    private int tongTien;
+    @Column(name = "tongtien" , precision = 10, scale = 2)
+    private BigDecimal tongTien;
 
     public String getFormattedGia() {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
