@@ -1,4 +1,5 @@
-﻿
+﻿create database SafeRide
+use SafeRide
 
 CREATE TABLE TaiKhoan
 (
@@ -116,8 +117,8 @@ CREATE TABLE ThanhToan
 CREATE TABLE HoaDon (
     ID				BIGINT                     NOT NULL PRIMARY KEY IDENTITY(1, 1), -- Khóa chính, tự động tăng từ 1
     MaHoaDon		VARCHAR(100),
-    ID_TaiKhoan		INT NOT NULL,
-	ID_Voucher		INT,
+    ID_TaiKhoan		BIGINT NOT NULL,
+	ID_Voucher		BIGINT,
     LoaiHoaDon		bit,                                       -- Loại hóa đơn tại quầy hoặc qua đặt hàng
 	NgayGiaoHang	Date,
 	NgayNhan		Date,
@@ -126,7 +127,7 @@ CREATE TABLE HoaDon (
     SoTienDaTra		DECIMAL(18, 2),
 	GhiChu			NVARCHAR(1000),
 	DiaChi			VARCHAR(255) NOT NULL,                        -- Địa chỉ giao hàng
-	TrangThai		NVARCHAR(50) NOT NULL,                         -- Trạng thái thanh toán
+	TrangThai		VARCHAR(50) NOT NULL,                         -- Trạng thái thanh toán
 	NguoiTao		NVARCHAR(255) NOT NULL,
 	NgayTao			DATETIME DEFAULT CURRENT_TIMESTaMP NOT NULL, -- Ngày tạo hóa đơn
 	NguoiCapNhat	NVARCHAR(255),
@@ -192,7 +193,7 @@ CREATE TABLE ChatLieuVo
     ID            BIGINT                     NOT NULL PRIMARY KEY IDENTITY(1, 1), -- Khóa chính, tự động tăng từ 1
     MaChatLieu    NVARCHAR(50) NOT NULL,                                          -- Mã chất liệu (không được để NULL)
     TenChatLieuVo NVARCHAR(255) NOT NULL,                                         -- Tên chất liệu vỏ (không được để NULL)
-    TrangThai     NVARCHAR(50) NOT NULL,                                          -- Trạng thái của chất liệu vỏ (không được để NULL)
+    TrangThai     VARCHAR(50) NOT NULL,                                          -- Trạng thái của chất liệu vỏ (không được để NULL)
     NgayTao       DATETIME DEFAULT GETDATE() NOT NULL,                            -- Ngày tạo chất liệu vỏ (tự động lấy thời gian hiện tại)
     NguoiTao      NVARCHAR(255) NOT NULL,                                         -- Người tạo chất liệu (không được để NULL)
     NguoiCapNhat  NVARCHAR(255),                                                  -- Người cập nhật chất liệu (có thể để NULL)
@@ -210,7 +211,7 @@ CREATE TABLE LoaiMu
     NgayTao      DATETIME DEFAULT GETDATE() NOT NULL,                            -- Ngày tạo (tự động lấy thời gian hiện tại)
     NguoiCapNhat NVARCHAR(255),                                                  -- Người cập nhật loại mũ (có thể để NULL)
     NgayCapNhat  DATETIME,                                                       -- Ngày cập nhật loại mũ (có thể để NULL)
-    TrangThai    NVARCHAR(50) NOT NULL                                           -- Trạng thái loại mũ (không được để NULL)
+    TrangThai    VARCHAR(50) NOT NULL                                           -- Trạng thái loại mũ (không được để NULL)
 );
 
 CREATE TABLE KichThuoc
@@ -337,18 +338,17 @@ VALUES (N'Admin', 'System', N'Quản trị hệ thống với đầy đủ quy�
        (N'Khách hàng', 'System', N'Khách hàng sử dụng dịch vụ của công ty');
 
 --INSERT TaiKhoan
-INSERT INTO TaiKhoan (ID_VaiTro, TenDangNhap, MatKhau, HoTen, NgaySinh, GioiTinh, SDT, Email, CCCD, Avatar, NguoiTao,
-                      TrangThai)
+INSERT INTO TaiKhoan (ID_VaiTro, TenDangNhap, MatKhau, HoTen, NgaySinh, GioiTinh, SDT, Email, CCCD, Avatar,TrangThai)
 VALUES (1, 'tuan', 'tuan', N'Phạm Anh Tuấn', '2004-12-01', 1, '0123456789', 'tuanpaph35819@fpt.edu.vn', '123456789012',
-        'avatar1.jpg', NULL, 1),
+        'avatar1.jpg', 1),
        (1, 'nhanvien1', 'password123', N'Trần Thị B', '1992-02-02', 0, '0987654321', 'nhanvien1@example.com',
-        '123456789013', 'avatar2.jpg', NULL, 1),
+        '123456789013', 'avatar2.jpg',1),
        (1, 'khachhang1', 'password123', N'Lê Văn C', '1995-03-03', 1, '0123987654', 'khachhang1@example.com',
-        '123456789014', 'avatar3.jpg', NULL, 1),
+        '123456789014', 'avatar3.jpg',1),
        (1, 'admin2', 'password123', N'Phạm Văn D', '1985-04-04', 1, '0123456780', 'admin2@example.com', '123456789015',
-        'avatar4.jpg', NULL, 1),
+        'avatar4.jpg',1),
        (2, 'nhanvien2', 'password123', N'Nguyễn Thị E', '1993-05-05', 0, '0123456790', 'nhanvien2@example.com',
-        '123456789016', 'avatar5.jpg', NULL, 1);
+        '123456789016', 'avatar5.jpg',1);
 --INSERT MauSac
 INSERT INTO MauSac (MaMau, TenMau, MoTa, NgayCapNhat)
 VALUES (N'M1', N'Màu Đỏ', N'Màu đỏ tươi, thể hiện sức mạnh và đam mê.', NULL),
@@ -384,6 +384,13 @@ VALUES ('MBH01', N'Mũ bảo hiểm nửa đầu, thường dùng cho người l
         N'Mũ bảo hiểm có kính', N'Admin', N'Hoạt động');
 
 --INSERT ChatLieuVo
+INSERT INTO ChatLieuVo (MaChatLieu, TenChatLieuVo, TrangThai, NguoiTao, NguoiCapNhat, NgayCapNhat, MoTa) VALUES
+('CL001', N'Chất liệu vỏ cao cấp', 1, 'Admin', NULL, NULL, N'Chất liệu vỏ bền bỉ, chịu nhiệt tốt, thích hợp cho các sản phẩm cao cấp.'),
+('CL002', N'Chất liệu vỏ chống nước', 1, 'Admin', NULL, NULL, N'Chất liệu chống nước, hoàn hảo cho các sản phẩm dùng ngoài trời.'),
+('CL003', N'Chất liệu vỏ nhẹ', 1, 'Admin', NULL, NULL, N'Chất liệu siêu nhẹ, mang lại sự thoải mái khi sử dụng trong thời gian dài.'),
+('CL004', N'Chất liệu vỏ thân thiện môi trường',1 , 'Admin', NULL, NULL, N'Sản phẩm được làm từ nguyên liệu tái chế, thân thiện với môi trường.'),
+('CL005', N'Chất liệu vỏ sang trọng', 1, 'Admin', NULL, NULL, N'Chất liệu vỏ mang lại vẻ ngoài sang trọng, phù hợp cho các sản phẩm thời trang.');
+
 --INSERT SanPham
 
 INSERT INTO SanPham (Ten, TrangThai, MoTa)
@@ -396,18 +403,6 @@ VALUES
     (N'Mũ bảo hiểm 6', N'Hết hàng', N'Mũ bảo hiểm mini, thích hợp cho xe đạp.'),
     (N'Mũ bảo hiểm 7', N'Còn hàng', N'Mũ bảo hiểm đa năng, cho mọi loại xe.'),
     (N'Mũ bảo hiểm 8', N'Còn hàng', N'Mũ bảo hiểm cao cấp, thiết kế sang trọng.');
-
---INSERT SanPhamChiTiet
-
-INSERT INTO SanPhamChiTiet (ID_SanPham, ID_ThuongHieu, ID_ChatLieuVo, ID_ChatLieuDem, ID_LoaiMu, ID_KichThuoc, ID_KhuyenMai,
-ID_LoaiKinh, ID_MauSac, MaSPCT, DonGia, SoLuong, XuatXu, MoTaChiTiet, TrangThai, NguoiTao) 
-VALUES
-(1, 1, 1, 1, 1, 1, Null, 1, 1, 'SPCT001', 500000, 10, N'Việt Nam', N'Chất liệu cao cấp từ Việt Nam, mang lại sự thoải mái và bền bỉ.', 1, 'Admin'),
-(3, 2, 2, 2, 1, 2, Null, 3, 2, 'SPCT002', 700000, 5, N'Nhật Bản', N'Thiết kế hiện đại từ Nhật Bản, đảm bảo tính thẩm mỹ và chất lượng cao.', 1, 'Admin'),
-(2, 3, 3, 1, 1, 3, Null, 2, 3, 'SPCT003', 900000, 15, N'Hàn Quốc', N'Sản phẩm được làm từ chất liệu nhập khẩu từ Hàn Quốc, bền và đẹp.', 1, 'Admin'),
-(2, 1, 3, 2, 3, 1, Null, 3, 4, 'SPCT004', 600000, 8, N'Mỹ', N'Chất lượng đỉnh cao từ Mỹ, mang lại sự sang trọng và đẳng cấp.', 1, 'Admin'),
-(1, 2, 1, 3, 2, 2, Null, 1, 5, 'SPCT005', 800000, 12, N'Đức', N'Sản phẩm xuất xứ từ Đức, nổi bật với độ bền và thiết kế tinh tế.', 1, 'Admin');
-
 
 --INSERT ThuongHieu
 
@@ -455,6 +450,17 @@ VALUES (N'LK001', N'Kính trong suốt', N'Còn hàng', N'Nguyen Van A',
        (N'LK007', N'Kính chống hơi nước', N'Còn hàng', N'Nguyen Van G',
         N'Kính có khả năng chống ngưng tụ hơi nước, đảm bảo tầm nhìn rõ ràng trong mọi điều kiện thời tiết.');
 
+--INSERT SanPhamChiTiet
+
+INSERT INTO SanPhamChiTiet (ID_SP, ID_ThuongHieu, ID_ChatLieuVo, ID_ChatLieuDem, ID_LoaiMu, ID_KichThuoc, ID_KhuyenMai,
+ID_LoaiKinh, ID_MauSac, MaSPCT, DonGia, SoLuong, XuatXu, MoTaChiTiet, TrangThai, NguoiTao) 
+VALUES
+(1, 1, 1, 1, 1, 1, Null, 1, 1, 'SPCT001', 500000, 10, N'Việt Nam', N'Chất liệu cao cấp từ Việt Nam, mang lại sự thoải mái và bền bỉ.', 1, 'Admin'),
+(3, 2, 2, 2, 1, 2, Null, 3, 2, 'SPCT002', 700000, 5, N'Nhật Bản', N'Thiết kế hiện đại từ Nhật Bản, đảm bảo tính thẩm mỹ và chất lượng cao.', 1, 'Admin'),
+(2, 3, 3, 1, 1, 3, Null, 2, 3, 'SPCT003', 900000, 15, N'Hàn Quốc', N'Sản phẩm được làm từ chất liệu nhập khẩu từ Hàn Quốc, bền và đẹp.', 1, 'Admin'),
+(2, 1, 3, 2, 3, 1, Null, 3, 4, 'SPCT004', 600000, 8, N'Mỹ', N'Chất lượng đỉnh cao từ Mỹ, mang lại sự sang trọng và đẳng cấp.', 1, 'Admin'),
+(1, 2, 1, 3, 2, 2, Null, 1, 5, 'SPCT005', 800000, 12, N'Đức', N'Sản phẩm xuất xứ từ Đức, nổi bật với độ bền và thiết kế tinh tế.', 1, 'Admin');
+
 
 --INSERT KhuyenMai
 INSERT INTO KhuyenMai (MaKhuyenMai, TenKhuyenMai, GiaTriKhuyenMai, NgayBatDau, NgayKetThuc, PhuongThucKhuyenMai,
@@ -478,3 +484,20 @@ VALUES
     ('MU2024C', N'Giảm giá mũ bảo hiểm mùa hè', '2024-06-01', '2024-07-01', 80000, 40000, 150, N'Hoạt động', N'Giảm giá cho mũ bảo hiểm bảo hành 1 năm'),
     ('MU2024D', N'Ưu đãi mũ bảo hiểm mùa mưa', '2024-09-01', '2024-09-30', 120000, 60000, 75, N'Đang chờ', N'Khuyến mãi cho mũ bảo hiểm chống nước mùa mưa'),
     ('MU2024E', N'Giảm giá cuối năm - Mũ bảo hiểm', '2024-12-01', '2024-12-31', 150000, 75000, 200, N'Hoạt động', N'Áp dụng cho tất cả các sản phẩm mũ bảo hiểm trong tháng 12');
+
+	select * from sanpham
+	select * from chatlieuvo
+	select * from giohang
+	select * from hoadon
+	select * from hoadonchitiet
+	select * from khuyenmai
+	select * from kichthuoc
+	select * from loaikinh
+	select * from loaimu
+	select * from mausac
+	select * from sanphamchitiet
+	select * from taikhoan
+	select * from thanhtoan
+	select * from thuonghieu
+	select * from vaitro
+	select * from voucher
