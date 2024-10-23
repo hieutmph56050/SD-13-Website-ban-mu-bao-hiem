@@ -43,7 +43,7 @@ public class BanHangController {
 //        model.addAttribute("listHoaDon", hoaDonList);
 //        model.addAttribute("listSanPhamChiTiet", spChiTietRepository.findAll());
 //        model.addAttribute("listHoaDonChiTiet", null);  // Đặt giá trị ban đầu là null
-//        return ResponseEntity.status()
+//        return ResponseEntity.ok()
 //    }
 
     @PostMapping("/them-hoa-don")
@@ -53,12 +53,13 @@ public class BanHangController {
         hoaDon.setTongTien(new BigDecimal("0"));
         hoaDon.setTt("Chưa thanh toán");
         hoaDon.setDiaChi("SafeRide - Hà Nội");
-        TaiKhoan taiKhoan = taiKhoanRepository.findById(6).orElse(null);
+        TaiKhoan taiKhoan = taiKhoanRepository.findById(1).orElse(null);
         hoaDon.setIdTaiKhoan(taiKhoan);
+        hoaDon.setNguoiTao("Phạm Anh Tuấn");
         HoaDon hoaDonSaved = hoaDonRepository.save(hoaDon);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(hoaDonSaved);
     }
-
 
     @GetMapping("/chon-hoa-don/{hoaDonId}")
     public ResponseEntity<?> selectInvoice(@PathVariable Integer hoaDonId) {
@@ -140,7 +141,6 @@ public class BanHangController {
         return ResponseEntity.ok("Thêm sản phẩm thành công");
     }
 
-
     private void updateTotalAmount(HoaDon hoaDon) {
         List<HoaDonChiTiet> chiTietList = hoaDonChiTietRepository.findByHoaDonId(hoaDon.getId());
 
@@ -148,7 +148,6 @@ public class BanHangController {
         BigDecimal totalAmount = chiTietList.stream()
                 .map(HoaDonChiTiet::getTongTien)
                 .reduce(BigDecimal.ZERO, BigDecimal::add); // Cộng dồn các giá trị BigDecimal
-
         hoaDon.setTongTien(totalAmount);
         hoaDonRepository.save(hoaDon);
     }
@@ -174,10 +173,7 @@ public class BanHangController {
 
     @PostMapping("/thanh-toan")
     public ResponseEntity<?> thanhToan(@RequestParam(required = false) Integer hoaDonId,
-                                       @RequestParam BigDecimal soTienKhachTra,
-                                       Model model,
-                                       HoaDonChiTiet hoaDonChiTiet) {
-
+                                       @RequestParam BigDecimal soTienKhachTra, Model model) {
         if (hoaDonId == null) {
             model.addAttribute("error", "Hóa đơn không tồn tại. Vui lòng chọn hóa đơn hợp lệ.");
             List<HoaDon> hoaDonList = hoaDonRepository.findAll();
