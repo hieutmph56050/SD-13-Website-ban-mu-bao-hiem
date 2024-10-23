@@ -49,6 +49,8 @@ public class HoaDon {
     @Column(name = "ngaytao")
     private LocalDateTime ngayTao;
 
+    @Column(name = "NguoiTao")
+    private String nguoiTao;
 
     @PrePersist
     protected void onCreate() {
