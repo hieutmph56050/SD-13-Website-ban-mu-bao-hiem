@@ -20,7 +20,7 @@ public class LoaiMu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "maloai")
+    @Column(name = "maloaimu")
     private String ma;
 
     @Column(name = "tenloaimu")

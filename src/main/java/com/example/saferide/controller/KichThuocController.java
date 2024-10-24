@@ -1,65 +1,39 @@
 package com.example.saferide.controller;
 
-
 import com.example.saferide.entity.KichThuoc;
 import com.example.saferide.service.KichThuocService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-
 @Controller
-@RequestMapping("/kichthuoc/index")
+@RequestMapping("/api/kichthuoc")
 public class KichThuocController {
     @Autowired
     KichThuocService service;
 
-    @GetMapping("/list")
-    public String showList(Model model) {
-        model.addAttribute("list", service.getList());
-        return "kichthuoc/index";
+    @GetMapping
+    public ResponseEntity<?> getAll(){
+        return ResponseEntity.ok(service.getList());
     }
-    @GetMapping("/add")
-    public String addForm(){
-        return "kichthuoc/form";
-    }
+
     @PostMapping("/add")
-    public String addKichThuoc(KichThuoc kichthuoc){
-        service.add(kichthuoc);
-        return "redirect:/kichthuoc/index/list";
+    public ResponseEntity<?> add(@RequestBody KichThuoc kichThuoc){
+        return ResponseEntity.ok(service.add(kichThuoc));
     }
-    @GetMapping("/detail/{id}")
-    public String showDetail(@PathVariable("id") Integer id, Model model){
-        model.addAttribute("kichthuoc",service.findById(id));
-        return "kichthuoc/detail";
-    }
-    @GetMapping("/update/{id}")
-    public String showUpdate(@PathVariable("id") Integer id,Model model){
-        model.addAttribute("kichthuoc", service.findById(id));
-        return "kichthuoc/update";
-    }
-    @PostMapping("/update")
-    public String update(KichThuoc kichThuoc){
-        KichThuoc existingKichThuoc = service.findById(kichThuoc.getId());
 
-        if (existingKichThuoc != null) {
-            // Cập nhật các trường cần thiết
-            existingKichThuoc.setMa(kichThuoc.getMa());
-            existingKichThuoc.setMoTa(kichThuoc.getMoTa());
-            existingKichThuoc.setTen(kichThuoc.getTen());
-            // Giữ nguyên ngaytao
-            // Cập nhật ngaycapnhat
-            existingKichThuoc.setNgayCapNhat(LocalDateTime.now());
-
-            service.update(existingKichThuoc);
-        }
-        return "redirect:/kichthuoc/index/list";
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody KichThuoc kichThuoc){
+        return ResponseEntity.ok(service.update(kichThuoc,id));
     }
-    @GetMapping("/delete")
-    public String deleteKichThuoc(@RequestParam("id") Integer id){
-        service.delete(id);
-        return "redirect:/kichthuoc/index/list";
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id){
+        return ResponseEntity.ok(service.delete(id));
+    }
+    @GetMapping("{id}")
+    public ResponseEntity<?> findById(@PathVariable Integer id){
+        return ResponseEntity.ok(service.findById(id));
     }
 }

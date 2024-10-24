@@ -5,12 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Locale;
 
 @Getter
@@ -35,13 +34,31 @@ public class HoaDon {
     @ManyToOne
     private Voucher idVoucher;
 
-    @Column(name = "tongtien" , precision = 10, scale = 2)
+    @Column(name = "loaihoadon" , columnDefinition = "BIT")
+    private boolean loaiHoaDon;
+
+    @Column(name = "ngaygiaohang")
+    private Date ngayGiaoHang;
+
+    @Column(name = "ngaynhan")
+    private Date ngayNhan;
+
+    @Column(name = "giagiam" , precision = 18, scale = 2)
+    private BigDecimal giaGiam;
+
+    @Column(name = "tongtien" , precision = 18, scale = 2)
     private BigDecimal tongTien;
+
+    @Column(name = "sotiendatra" , precision = 18, scale = 2)
+    private BigDecimal soTienDaTra;
 
     public String getFormattedGia() {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         return formatter.format(tongTien);
     }
+
+    @Column(name = "ghichu")
+    private String ghiChu;
 
     @Column(name = "diachi")
     private String diaChi;
@@ -49,12 +66,20 @@ public class HoaDon {
     @Column(name = "ngaytao")
     private LocalDateTime ngayTao;
 
+    @Column(name = "nguoitao")
+    private String nguoiTao;
+
+    @Column(name = "ngaycapnhat")
+    private LocalDateTime ngayCapNhat;
+
+    @Column(name = "nguoicapnhat")
+    private String nguoiCapNhat;
 
     @PrePersist
     protected void onCreate() {
         ngayTao = LocalDateTime.now(); // Gán thời gian hiện tại
     }
 
-    @Column(name = "trangthai", columnDefinition = "BIT")
+    @Column(name = "trangthai")
     private String tt;
 }

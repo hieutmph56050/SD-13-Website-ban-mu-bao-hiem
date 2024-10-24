@@ -64,11 +64,11 @@ public class SPChiTiet {
 
     @Column(name = "soluong")
     private int sl;
-//
-//    @Column(name = "motachitiet")
-//    private String moTaCT;
 
-    @Column(name = "Gia", precision = 10, scale = 2)
+    @Column(name = "motachitiet")
+    private String moTaCT;
+
+    @Column(name = "dongia", precision = 10, scale = 2)
     private BigDecimal donGia;
 
     public String getFormattedGia() {
@@ -76,6 +76,8 @@ public class SPChiTiet {
         return formatter.format(donGia);
     }
 
+    @Column(name = "anh")
+    private String anh;
 
     @Column(name = "trangthai")
     private String tt;

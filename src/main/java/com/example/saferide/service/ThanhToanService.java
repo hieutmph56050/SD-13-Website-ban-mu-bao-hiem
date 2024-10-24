@@ -1,12 +1,13 @@
 package com.example.saferide.service;
 
-
 import com.example.saferide.entity.ThanhToan;
 import com.example.saferide.repository.ThanhToanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ThanhToanService {
@@ -21,15 +22,28 @@ public class ThanhToanService {
         return thanhtoanRepository.findById(id).get();
     }
 
-    public void delete(Integer id) {
-        thanhtoanRepository.deleteById(id);
+    public ThanhToan add(ThanhToan thanhtoan) {
+        return thanhtoanRepository.save(thanhtoan);
     }
 
-    public ThanhToan add(ThanhToan thanhToan) {
-        return thanhtoanRepository.save(thanhToan);
+    public ThanhToan update(ThanhToan thanhtoan, Integer id) {
+        Optional<ThanhToan> optional = thanhtoanRepository.findById(id);
+        return optional.map(thanhtoan1 -> {
+            thanhtoan1.setIdHoaDon(thanhtoan.getIdHoaDon());
+            thanhtoan1.setTen(thanhtoan.getTen());
+            thanhtoan1.setTongTien(thanhtoan.getTongTien());
+            thanhtoan1.setNgayThanhToan(thanhtoan.getNgayThanhToan());
+            thanhtoan1.setNguoiCapNhat("Admin");
+            thanhtoan1.setNgayCapNhat(LocalDateTime.now());
+            thanhtoan1.setTt(thanhtoan.getTt());
+            return thanhtoanRepository.save(thanhtoan1);
+        }).orElse(null);
     }
-
-    public ThanhToan update(ThanhToan thanhToan) {
-        return thanhtoanRepository.save(thanhToan);
+    public ThanhToan delete(Integer id) {
+        Optional<ThanhToan> optional = thanhtoanRepository.findById(id);
+        return optional.map(thanhtoan1 -> {
+            thanhtoanRepository.delete(thanhtoan1);
+            return thanhtoan1;
+        }).orElse(null);
     }
 }

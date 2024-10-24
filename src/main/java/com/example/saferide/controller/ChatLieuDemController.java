@@ -3,62 +3,37 @@ package com.example.saferide.controller;
 import com.example.saferide.entity.ChatLieuDem;
 import com.example.saferide.service.ChatLieuDemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-
 @Controller
-@RequestMapping("/chatlieudem/index")
+@RequestMapping("/api/chatlieudem")
 public class ChatLieuDemController {
     @Autowired
     ChatLieuDemService service;
 
-    @GetMapping("/list")
-    public String showList(Model model) {
-        model.addAttribute("list", service.getList());
-        return "chatlieudem/index";
+    @GetMapping
+    public ResponseEntity<?> getAll(){
+        return ResponseEntity.ok(service.getList());
     }
-    @GetMapping("/add")
-    public String addForm(){
-        return "chatlieudem/form";
-    }
+
     @PostMapping("/add")
-    public String addChatLieuDem(ChatLieuDem chatlieudem){
-        service.add(chatlieudem);
-        return "redirect:/chatlieudem/index/list";
+    public ResponseEntity<?> add(@RequestBody ChatLieuDem chatLieuDem){
+        return ResponseEntity.ok(service.add(chatLieuDem));
     }
-    @GetMapping("/detail/{id}")
-    public String showDetail(@PathVariable("id") Integer id, Model model){
-        model.addAttribute("chatlieudem",service.findById(id));
-        return "chatlieudem/detail";
-    }
-    @GetMapping("/update/{id}")
-    public String showUpdate(@PathVariable("id") Integer id,Model model){
-        model.addAttribute("chatlieudem", service.findById(id));
-        return "chatlieudem/update";
-    }
-    @PostMapping("/update")
-    public String update(ChatLieuDem chatLieuDem){
-        ChatLieuDem existingChatLieuDem = service.findById(chatLieuDem.getId());
 
-        if (existingChatLieuDem != null) {
-            // Cập nhật các trường cần thiết
-            existingChatLieuDem.setMa(chatLieuDem.getMa());
-            existingChatLieuDem.setMoTa(chatLieuDem.getMoTa());
-            existingChatLieuDem.setTen(chatLieuDem.getTen());
-            // Giữ nguyên ngaytao
-            // Cập nhật ngaycapnhat
-            existingChatLieuDem.setNgayCapNhat(LocalDateTime.now());
-
-            service.update(existingChatLieuDem);
-        }
-        return "redirect:/chatlieudem/index/list";
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody ChatLieuDem chatLieuDem){
+        return ResponseEntity.ok(service.update(chatLieuDem,id));
     }
-    @GetMapping("/delete")
-    public String deleteChatLieuDem(@RequestParam("id") Integer id){
-        service.delete(id);
-        return "redirect:/chatlieudem/index/list";
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id){
+        return ResponseEntity.ok(service.delete(id));
+    }
+    @GetMapping("{id}")
+    public ResponseEntity<?> findById(@PathVariable Integer id){
+        return ResponseEntity.ok(service.findById(id));
     }
 }

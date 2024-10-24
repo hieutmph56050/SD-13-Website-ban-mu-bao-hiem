@@ -1,86 +1,39 @@
 package com.example.saferide.controller;
 
-
-import com.example.saferide.entity.GioHang;
 import com.example.saferide.entity.GioHangChiTiet;
-import com.example.saferide.entity.SPChiTiet;
 import com.example.saferide.service.GioHangChiTietService;
-import com.example.saferide.service.GioHangService;
-import com.example.saferide.service.SPChiTietService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Controller
-@RequestMapping("/giohangchitiet/index")
+@RequestMapping("/api/giohangchitiet")
 public class GioHangChiTietController {
     @Autowired
     GioHangChiTietService service;
 
-    @Autowired
-    GioHangService giohangService;
-
-    @Autowired
-    SPChiTietService spchitietService;
-
-    @GetMapping("/list")
-    public String getList(Model model){
-        model.addAttribute("list",service.getList());
-        return "giohangchitiet/index";
+    @GetMapping
+    public ResponseEntity<?> getAll(){
+        return ResponseEntity.ok(service.getList());
     }
-    @GetMapping("/add")
-    public String addForm() {
-        return "giohangchitiet/form";
-    }
+
     @PostMapping("/add")
-    public String add(GioHangChiTiet giohangchitiet) {
-        service.add(giohangchitiet);
-        return "redirect:/giohangchitiet/index/list";
+    public ResponseEntity<?> add(@RequestBody GioHangChiTiet giohangChiTiet){
+        return ResponseEntity.ok(service.add(giohangChiTiet));
     }
-    @GetMapping("/detail/{id}")
-    public String detail(@PathVariable("id") Integer id,Model model) {
-        model.addAttribute("giohangchitiet",service.findById(id));
-        return "giohangchitiet/detail";
-    }
-    @GetMapping("/update/{id}")
-    public String showUpdate(@PathVariable("id") Integer id, Model model){
-        model.addAttribute("giohangchitiet",service.findById(id));
-        return "giohangchitiet/update";
-    }
-    @PostMapping("/update")
-    public String update(GioHangChiTiet giohangChiTiet){
-        GioHangChiTiet existingGioHangChiTiet = service.findById(giohangChiTiet.getId());
 
-        if (existingGioHangChiTiet != null) {
-            // Cập nhật các trường cần thiết
-            existingGioHangChiTiet.setMa(giohangChiTiet.getMa());
-            existingGioHangChiTiet.setIdGioHang(giohangChiTiet.getIdGioHang());
-            existingGioHangChiTiet.setIdSPCT(giohangChiTiet.getIdSPCT());
-            existingGioHangChiTiet.setDonGia(giohangChiTiet.getDonGia());
-            existingGioHangChiTiet.setSl(giohangChiTiet.getSl());
-            existingGioHangChiTiet.setTt(giohangChiTiet.getTt());
-            // Giữ nguyên ngaytao
-            // Cập nhật ngaycapnhat
-            existingGioHangChiTiet.setNgayCapNhat(LocalDateTime.now());
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody GioHangChiTiet giohangChiTiet){
+        return ResponseEntity.ok(service.update(giohangChiTiet,id));
+    }
 
-            service.update(existingGioHangChiTiet);
-        }
-        return "redirect:/giohangchitiet/index/list";
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id){
+        return ResponseEntity.ok(service.delete(id));
     }
-    @GetMapping("/delete")
-    public String delete(@RequestParam("id") Integer id){
-        service.delete(id);
-        return "redirect:/giohangchitiet/index/list";
-    }
-    @ModelAttribute("listGioHang")
-    List<GioHang> getListGioHang() { return giohangService.getList();
-    }
-    @ModelAttribute("listSPChiTiet")
-    List<SPChiTiet> getListSPChiTiet() {
-        return spchitietService.getList();
+    @GetMapping("{id}")
+    public ResponseEntity<?> findById(@PathVariable Integer id){
+        return ResponseEntity.ok(service.findById(id));
     }
 }

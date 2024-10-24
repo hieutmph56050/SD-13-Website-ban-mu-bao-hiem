@@ -74,15 +74,6 @@ public class BanHangController {
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
 
-        if (hoaDonId == null) {
-            model.addAttribute("error", "Không có hóa đơn để thêm sản phẩm.");
-            List<HoaDon> hoaDonList = hoaDonRepository.findAll();
-            model.addAttribute("listHoaDon", hoaDonList);
-            model.addAttribute("listSanPhamChiTiet", spChiTietRepository.findAll());
-            model.addAttribute("listHoaDonChiTiet", null);  // Đặt giá trị ban đầu là null
-            return "banhang/banhang"; // Return the correct view page with the error
-        }
-
         // Retrieve the product details
         SPChiTiet spChiTiet = spChiTietRepository.findById(sanPhamId)
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
@@ -105,7 +96,7 @@ public class BanHangController {
             hoaDonChiTiet.setIdHoaDon(hoaDon);
             hoaDonChiTiet.setIdSPCT(spChiTiet);
             hoaDonChiTiet.setSl(soLuong.intValue());
-            hoaDonChiTiet.setGia(spChiTiet.getDonGia());
+            hoaDonChiTiet.setTongTien(spChiTiet.getDonGia());
 
             BigDecimal newTotal = spChiTiet.getDonGia().multiply(soLuong);
             if (newTotal.compareTo(new BigDecimal("99999999.99")) > 0) {
@@ -116,7 +107,7 @@ public class BanHangController {
 
             // Generate mã for the new invoice detail
             String maHDCT = "HDCT-" + hoaDon.getId() + "-" + (hoaDonChiTietRepository.countByHoaDonId(hoaDon.getId()) + 1);
-            hoaDonChiTiet.setMa(maHDCT);
+            hoaDonChiTiet.setMahdct(maHDCT);
             hoaDonChiTiet.setTt("Đang thanh toán");
 
             // Save the invoice detail
@@ -129,6 +120,8 @@ public class BanHangController {
         // Redirect to display the invoice details
         return "redirect:/ban-hang/chon-hoa-don?hoaDonId=" + hoaDonId;
     }
+
+
 
 
     private void updateTotalAmount(HoaDon hoaDon) {
@@ -161,56 +154,53 @@ public class BanHangController {
         // Redirect to the invoice details page
         return "redirect:/ban-hang/chon-hoa-don?hoaDonId=" + hoaDonId;
     }
-
     @PostMapping("/thanh-toan")
-    public String thanhToan(@RequestParam(required = false) Integer hoaDonId,
-                            @RequestParam BigDecimal soTienKhachTra,
-                            Model model,
-                            HoaDonChiTiet hoaDonChiTiet) {
-
+    public String thanhToan(@RequestParam(required = false) Integer hoaDonId, @RequestParam BigDecimal soTienKhachTra, Model model) {
+        // Lấy hóa đơn dựa trên ID
         if (hoaDonId == null) {
-            model.addAttribute("error", "Hóa đơn không tồn tại. Vui lòng chọn hóa đơn hợp lệ.");
-            List<HoaDon> hoaDonList = hoaDonRepository.findAll();
-            model.addAttribute("listHoaDon", hoaDonList);
-            model.addAttribute("listSanPhamChiTiet", spChiTietRepository.findAll());
-            model.addAttribute("listHoaDonChiTiet", null);  // Đặt giá trị ban đầu là null
-            return "banhang/banhang"; // Return the correct view page with the error
+            model.addAttribute("error", "Không tìm thấy ID hóa đơn. Vui lòng thử lại.");
+
         }
 
-        // Retrieve the invoice and its details
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
 
+        // Kiểm tra xem hóa đơn có sản phẩm chi tiết nào không
         List<HoaDonChiTiet> listHoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonId(hoaDonId);
-
-        // Check if there are any product details in the invoice
         if (listHoaDonChiTiet.isEmpty()) {
             model.addAttribute("error", "Hóa đơn này không có sản phẩm nào. Vui lòng thêm sản phẩm trước khi thanh toán.");
             return selectInvoice(hoaDonId, model);
         }
 
-        // Check the payment amount
+        Optional<HoaDon> hoaDonList = hoaDonRepository.findById(hoaDonId);
+
+
+        // Kiểm tra số tiền khách trả
         if (soTienKhachTra.compareTo(hoaDon.getTongTien()) < 0) {
             model.addAttribute("error", "Số tiền khách trả không đủ. Vui lòng kiểm tra lại.");
             return selectInvoice(hoaDonId, model);
         }
 
-        // Process the payment
-        hoaDon.setTt("Đã thanh toán");
+
+        // Nếu đủ, thực hiện thanh toán
+        hoaDon.setTt("Đã thanh toán"); // Cập nhật trạng thái hóa đơn
         hoaDonRepository.save(hoaDon);
 
-        // Update product stock
+        // Trừ số lượng sản phẩm trong kho dựa trên hóa đơn chi tiết
         for (HoaDonChiTiet hdct : listHoaDonChiTiet) {
-            SPChiTiet spChiTiet = hdct.getIdSPCT();
+            SPChiTiet spChiTiet = hdct.getIdSPCT(); // Lấy sản phẩm chi tiết
 
+            // Kiểm tra số lượng tồn kho
             if (spChiTiet.getSl() < hdct.getSl()) {
                 model.addAttribute("error", "Số lượng tồn kho không đủ cho sản phẩm: " + spChiTiet.getIdSanPham().getTen());
                 return selectInvoice(hoaDonId, model);
             }
 
+            // Trừ số lượng trong kho
             spChiTiet.setSl(spChiTiet.getSl() - hdct.getSl());
-            spChiTietRepository.save(spChiTiet);
+            spChiTietRepository.save(spChiTiet); // Cập nhật lại sản phẩm chi tiết sau khi trừ
         }
+
         hoaDonRepository.deleteById(hoaDonId);
         model.addAttribute("thanhcong", "Thanh toán thành công!");
         return "redirect:/ban-hang/hien-thi";

@@ -1,35 +1,49 @@
 package com.example.saferide.service;
 
-
 import com.example.saferide.entity.GioHangChiTiet;
 import com.example.saferide.repository.GioHangChiTietRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GioHangChiTietService {
     @Autowired
-    GioHangChiTietRepository giohangchitietRepository;
+    GioHangChiTietRepository sanphamRepository;
 
     public List<GioHangChiTiet> getList() {
-        return giohangchitietRepository.findAll();
+        return sanphamRepository.findAll();
     }
 
     public GioHangChiTiet findById(Integer id) {
-        return giohangchitietRepository.findById(id).get();
+        return sanphamRepository.findById(id).get();
     }
 
-    public void delete(Integer id) {
-        giohangchitietRepository.deleteById(id);
+    public GioHangChiTiet add(GioHangChiTiet sanPham) {
+        return sanphamRepository.save(sanPham);
     }
 
-    public GioHangChiTiet add(GioHangChiTiet giohangChiTiet) {
-        return giohangchitietRepository.save(giohangChiTiet);
+    public GioHangChiTiet update(GioHangChiTiet sanPham, Integer id) {
+        Optional<GioHangChiTiet> optional = sanphamRepository.findById(id);
+        return optional.map(sanPham1 -> {
+            sanPham1.setIdGioHang(sanPham.getIdGioHang());
+            sanPham1.setIdSPCT(sanPham.getIdSPCT());
+            sanPham1.setMa(sanPham.getMa());
+            sanPham1.setDonGia(sanPham.getDonGia());
+            sanPham1.setSl(sanPham.getSl());
+            sanPham1.setNgayCapNhat(LocalDateTime.now());
+            sanPham1.setTt(sanPham.getTt());
+            return sanphamRepository.save(sanPham1);
+        }).orElse(null);
     }
-
-    public GioHangChiTiet update(GioHangChiTiet giohangChiTiet) {
-        return giohangchitietRepository.save(giohangChiTiet);
+    public GioHangChiTiet delete(Integer id) {
+        Optional<GioHangChiTiet> optional = sanphamRepository.findById(id);
+        return optional.map(sanPham1 -> {
+            sanphamRepository.delete(sanPham1);
+            return sanPham1;
+        }).orElse(null);
     }
 }
