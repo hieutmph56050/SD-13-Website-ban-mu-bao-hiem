@@ -116,7 +116,7 @@ public class BanHangController {
             hoaDonChiTiet.setIdHoaDon(hoaDon);
             hoaDonChiTiet.setIdSPCT(spChiTiet);
             hoaDonChiTiet.setSl(soLuong.intValue());
-            hoaDonChiTiet.setGia(spChiTiet.getDonGia());
+            hoaDonChiTiet.setTongTien(spChiTiet.getDonGia());
 
             BigDecimal newTotal = spChiTiet.getDonGia().multiply(soLuong);
             if (newTotal.compareTo(new BigDecimal("99999999.99")) > 0) {
@@ -127,7 +127,7 @@ public class BanHangController {
 
             // Generate mã for the new invoice detail
             String maHDCT = "HDCT-" + hoaDon.getId() + "-" + (hoaDonChiTietRepository.countByHoaDonId(hoaDon.getId()) + 1);
-            hoaDonChiTiet.setMa(maHDCT);
+            hoaDonChiTiet.setMahdct(maHDCT);
             hoaDonChiTiet.setTt("Đang thanh toán");
 
             // Save the invoice detail

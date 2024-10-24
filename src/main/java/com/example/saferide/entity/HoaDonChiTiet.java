@@ -32,9 +32,9 @@ public class HoaDonChiTiet {
     private SPChiTiet idSPCT;
 
     @Column(name = "mahdct")
-    private String ma;
+    private String mahdct;
 
-    @Column(name = "tongtien", precision = 10, scale = 2)
+    @Column(name = "tongtien", precision = 18, scale = 2)
     private BigDecimal tongTien = BigDecimal.ZERO;
 
     public String getFormattedTongTien() {
@@ -48,13 +48,13 @@ public class HoaDonChiTiet {
     @Column(name = "ghichu")
     private String ghiChu;
 
-    @Column(name = "Gia", precision = 18, scale = 2)
-    private BigDecimal gia = BigDecimal.ZERO;
-
-    public String getFormattedGia() {
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        return formatter.format(gia);
-    }
+//    @Column(name = "Gia", precision = 18, scale = 2)
+//    private BigDecimal gia = BigDecimal.ZERO;
+//
+//    public String getFormattedGia() {
+//        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+//        return formatter.format(gia);
+//    }
 
     @Column(name = "ngaytao")
     private LocalDateTime ngayTao;

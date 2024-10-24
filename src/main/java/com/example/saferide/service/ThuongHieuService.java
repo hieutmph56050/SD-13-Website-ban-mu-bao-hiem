@@ -1,12 +1,13 @@
 package com.example.saferide.service;
 
-
 import com.example.saferide.entity.ThuongHieu;
 import com.example.saferide.repository.ThuongHieuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ThuongHieuService {
@@ -21,15 +22,24 @@ public class ThuongHieuService {
         return thuonghieuRepository.findById(id).get();
     }
 
-    public void delete(Integer id) {
-        thuonghieuRepository.deleteById(id);
-    }
-
     public ThuongHieu add(ThuongHieu thuongHieu) {
         return thuonghieuRepository.save(thuongHieu);
     }
 
-    public ThuongHieu update(ThuongHieu thuongHieu) {
-        return thuonghieuRepository.save(thuongHieu);
+    public ThuongHieu update(ThuongHieu thuongHieu, Integer id) {
+        Optional<ThuongHieu> optional = thuonghieuRepository.findById(id);
+        return optional.map(thuongHieu1 -> {
+            thuongHieu1.setTen(thuongHieu.getTen());
+            thuongHieu1.setMoTa(thuongHieu.getMoTa());
+            thuongHieu1.setNgayCapNhat(LocalDateTime.now());
+            return thuonghieuRepository.save(thuongHieu1);
+        }).orElse(null);
+    }
+    public ThuongHieu delete(Integer id) {
+        Optional<ThuongHieu> optional = thuonghieuRepository.findById(id);
+        return optional.map(thuongHieu1 -> {
+            thuonghieuRepository.delete(thuongHieu1);
+            return thuongHieu1;
+        }).orElse(null);
     }
 }
