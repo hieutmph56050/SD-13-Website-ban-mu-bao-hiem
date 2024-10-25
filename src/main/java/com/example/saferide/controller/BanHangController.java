@@ -44,7 +44,7 @@ public class BanHangController {
     @PostMapping("/them-hoa-don")
     public ResponseEntity<?> themHoaDon(HoaDon hoaDon, Model model, @RequestBody(required = false) String tenKhachHang, @RequestBody(required = false) String sdt) {
         String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMdHms"));
-        Date fakedata = Date.from(LocalDateTime.now().toInstant((ZoneOffset) ZoneId.systemDefault()));
+        LocalDateTime fakedata = LocalDateTime.now();
         hoaDon.setMa("HD" + timeStamp);
         TaiKhoan taiKhoan = taiKhoanRepository.findById(1).orElse(null);
         hoaDon.setIdTaiKhoan(taiKhoan);

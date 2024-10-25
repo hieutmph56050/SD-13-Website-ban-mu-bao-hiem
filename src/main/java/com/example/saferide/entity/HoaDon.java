@@ -38,10 +38,10 @@ public class HoaDon {
     private boolean loaiHoaDon;
 
     @Column(name = "ngaygiaohang")
-    private Date ngayGiaoHang;
+    private LocalDateTime ngayGiaoHang;
 
     @Column(name = "ngaynhan")
-    private Date ngayNhan;
+    private LocalDateTime ngayNhan;
 
     @Column(name = "giagiam", precision = 18, scale = 2)
     private BigDecimal giaGiam;
