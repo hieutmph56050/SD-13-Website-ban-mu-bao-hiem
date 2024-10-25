@@ -23,7 +23,7 @@ public class HoaDon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "mahoadon")
+    @Column(name = "maHoaDon")
     private String ma;
 
     @JoinColumn(name = "ID_TaiKhoan", referencedColumnName = "id")
@@ -34,7 +34,7 @@ public class HoaDon {
     @ManyToOne
     private Voucher idVoucher;
 
-    @Column(name = "loaihoadon" , columnDefinition = "BIT")
+    @Column(name = "loaihoadon", columnDefinition = "BIT")
     private boolean loaiHoaDon;
 
     @Column(name = "ngaygiaohang")
@@ -43,13 +43,13 @@ public class HoaDon {
     @Column(name = "ngaynhan")
     private Date ngayNhan;
 
-    @Column(name = "giagiam" , precision = 18, scale = 2)
+    @Column(name = "giagiam", precision = 18, scale = 2)
     private BigDecimal giaGiam;
 
-    @Column(name = "tongtien" , precision = 18, scale = 2)
+    @Column(name = "tongtien", precision = 18, scale = 2)
     private BigDecimal tongTien;
 
-    @Column(name = "sotiendatra" , precision = 18, scale = 2)
+    @Column(name = "sotiendatra", precision = 18, scale = 2)
     private BigDecimal soTienDaTra;
 
     public String getFormattedGia() {
@@ -62,6 +62,9 @@ public class HoaDon {
 
     @Column(name = "diachi")
     private String diaChi;
+
+    @Column(name = "trangthai", columnDefinition = "BIT")
+    private String tt;
 
     @Column(name = "ngaytao")
     private LocalDateTime ngayTao;
@@ -79,7 +82,4 @@ public class HoaDon {
     protected void onCreate() {
         ngayTao = LocalDateTime.now(); // Gán thời gian hiện tại
     }
-
-    @Column(name = "trangthai")
-    private String tt;
 }
