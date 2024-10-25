@@ -35,7 +35,7 @@ public class HoaDon {
     private Voucher idVoucher;
 
     @Column(name = "loaihoadon", columnDefinition = "BIT")
-    private boolean loaiHoaDon;
+    private Integer loaiHoaDon;
 
     @Column(name = "ngaygiaohang")
     private LocalDateTime ngayGiaoHang;

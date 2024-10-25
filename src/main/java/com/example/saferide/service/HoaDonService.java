@@ -32,7 +32,7 @@ public class HoaDonService{
             hoaDon1.setMa(hoaDon.getMa());
             hoaDon1.setIdTaiKhoan(hoaDon.getIdTaiKhoan());
             hoaDon1.setIdVoucher(hoaDon.getIdVoucher());
-            hoaDon1.setLoaiHoaDon(hoaDon.isLoaiHoaDon());
+            hoaDon1.setLoaiHoaDon(hoaDon.getLoaiHoaDon());
             hoaDon1.setNgayGiaoHang(hoaDon.getNgayGiaoHang());
             hoaDon1.setNgayNhan(hoaDon.getNgayNhan());
             hoaDon1.setGiaGiam(hoaDon.getGiaGiam());

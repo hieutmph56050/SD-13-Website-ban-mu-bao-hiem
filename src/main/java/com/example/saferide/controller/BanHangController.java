@@ -49,7 +49,7 @@ public class BanHangController {
         TaiKhoan taiKhoan = taiKhoanRepository.findById(1).orElse(null);
         hoaDon.setIdTaiKhoan(taiKhoan);
         hoaDon.setIdVoucher(null);
-        hoaDon.setLoaiHoaDon(true);
+        hoaDon.setLoaiHoaDon(1);
         hoaDon.setNgayGiaoHang(fakedata);
         hoaDon.setNgayNhan(fakedata);
         hoaDon.setGiaGiam(null);
