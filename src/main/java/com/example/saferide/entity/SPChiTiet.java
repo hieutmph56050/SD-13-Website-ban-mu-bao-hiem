@@ -23,7 +23,7 @@ public class SPChiTiet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "ma")
+    @Column(name = "MaSPCT")
     private String ma;
 
     @ManyToOne
@@ -68,7 +68,7 @@ public class SPChiTiet {
 //    @Column(name = "motachitiet")
 //    private String moTaCT;
 
-    @Column(name = "Gia", precision = 10, scale = 2)
+    @Column(name = "DonGia", precision = 10, scale = 2)
     private BigDecimal donGia;
 
     public String getFormattedGia() {

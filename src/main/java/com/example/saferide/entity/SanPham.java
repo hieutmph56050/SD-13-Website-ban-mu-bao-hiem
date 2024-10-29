@@ -22,17 +22,12 @@ public class SanPham {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "id_sanphamchitiet")
-    private String idSPCT;
 
     @Column(name = "ten")
     private String ten;
 
     @Column(name = "mota")
     private String moTa;
-
-    @Column(name = "Gia")
-    private BigDecimal gia;
 
     @Column(name = "trangthai")
     private String tt;
