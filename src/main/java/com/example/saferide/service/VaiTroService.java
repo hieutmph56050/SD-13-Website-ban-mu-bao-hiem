@@ -1,12 +1,13 @@
 package com.example.saferide.service;
 
-
 import com.example.saferide.entity.VaiTro;
 import com.example.saferide.repository.VaiTroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VaiTroService {
@@ -21,15 +22,25 @@ public class VaiTroService {
         return vaitroRepository.findById(id).get();
     }
 
-    public void delete(Integer id) {
-        vaitroRepository.deleteById(id);
-    }
-
     public VaiTro add(VaiTro vaiTro) {
         return vaitroRepository.save(vaiTro);
     }
 
-    public VaiTro update(VaiTro vaiTro) {
-        return vaitroRepository.save(vaiTro);
+    public VaiTro update(VaiTro vaiTro, Integer id) {
+        Optional<VaiTro> optional = vaitroRepository.findById(id);
+        return optional.map(vaiTro1 -> {
+            vaiTro1.setTen(vaiTro.getTen());
+            vaiTro1.setMoTa(vaiTro.getMoTa());
+            vaiTro1.setNguoiCapNhat(vaiTro.getNguoiCapNhat());
+            vaiTro1.setNgayCapNhat(LocalDateTime.now());
+            return vaitroRepository.save(vaiTro1);
+        }).orElse(null);
+    }
+    public VaiTro delete(Integer id) {
+        Optional<VaiTro> optional = vaitroRepository.findById(id);
+        return optional.map(vaiTro1 -> {
+            vaitroRepository.delete(vaiTro1);
+            return vaiTro1;
+        }).orElse(null);
     }
 }

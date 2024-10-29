@@ -21,8 +21,7 @@ public class SanPham {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-
+  
     @Column(name = "ten")
     private String ten;
 
@@ -32,20 +31,4 @@ public class SanPham {
     @Column(name = "trangthai")
     private String tt;
 
-//    @Column(name = "ngaytao")
-//    private LocalDateTime ngayTao;
-//
-////    @Temporal(TemporalType.TMESTAMP)
-//    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-//    @Column(name = "ngaycapnhat")
-//    private LocalDateTime ngayCapNhat;
-//
-//    @PrePersist
-//    protected void onCreate() {
-//        ngayTao = LocalDateTime.now(); // Gán thời gian hiện tại
-//    }
-//    @PreUpdate
-//    protected void onUpdate() {
-//        ngayCapNhat = LocalDateTime.now(); // Gán thời gian hiện tại khi cập nhật
-//    }
 }

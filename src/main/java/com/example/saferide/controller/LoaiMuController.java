@@ -4,62 +4,37 @@ package com.example.saferide.controller;
 import com.example.saferide.entity.LoaiMu;
 import com.example.saferide.service.LoaiMuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-
 @Controller
-@RequestMapping("/loaimu/index")
+@RequestMapping("/api/loaimu")
 public class LoaiMuController {
     @Autowired
     LoaiMuService service;
 
-    @GetMapping("/list")
-    public String showList(Model model) {
-        model.addAttribute("list", service.getList());
-        return "loaimu/index";
+    @GetMapping
+    public ResponseEntity<?> getAll(){
+        return ResponseEntity.ok(service.getList());
     }
-    @GetMapping("/add")
-    public String addForm(){
-        return "loaimu/form";
-    }
+
     @PostMapping("/add")
-    public String addLoaiMu(LoaiMu loaimu){
-        service.add(loaimu);
-        return "redirect:/loaimu/index/list";
+    public ResponseEntity<?> add(@RequestBody LoaiMu loaiMu){
+        return ResponseEntity.ok(service.add(loaiMu));
     }
-    @GetMapping("/detail/{id}")
-    public String showDetail(@PathVariable("id") Integer id, Model model){
-        model.addAttribute("loaimu",service.findById(id));
-        return "loaimu/detail";
-    }
-    @GetMapping("/update/{id}")
-    public String showUpdate(@PathVariable("id") Integer id,Model model){
-        model.addAttribute("loaimu", service.findById(id));
-        return "loaimu/update";
-    }
-    @PostMapping("/update")
-    public String update(LoaiMu loaiMu){
-        LoaiMu existingLoaiMu = service.findById(loaiMu.getId());
 
-        if (existingLoaiMu != null) {
-            // Cập nhật các trường cần thiết
-            existingLoaiMu.setMa(loaiMu.getMa());
-            existingLoaiMu.setMoTa(loaiMu.getMoTa());
-            existingLoaiMu.setTen(loaiMu.getTen());
-            // Giữ nguyên ngaytao
-            // Cập nhật ngaycapnhat
-            existingLoaiMu.setNgayCapNhat(LocalDateTime.now());
-
-            service.update(existingLoaiMu);
-        }
-        return "redirect:/loaimu/index/list";
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody LoaiMu loaiMu){
+        return ResponseEntity.ok(service.update(loaiMu,id));
     }
-    @GetMapping("/delete")
-    public String deleteLoaiMu(@RequestParam("id") Integer id){
-        service.delete(id);
-        return "redirect:/loaimu/index/list";
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id){
+        return ResponseEntity.ok(service.delete(id));
+    }
+    @GetMapping("{id}")
+    public ResponseEntity<?> findById(@PathVariable Integer id){
+        return ResponseEntity.ok(service.findById(id));
     }
 }

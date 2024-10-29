@@ -40,7 +40,7 @@
 <body>
 <div>
     <header>
-        <h1> <i class="fa-solid fa-list"></i> Bán hàng tại quầy SafeRide</h1>
+        <h1>Bán hàng tại quầy SafeRide</h1>
     </header>
 
     <main>
@@ -49,7 +49,7 @@
                 <h2>Danh sách Hóa Đơn</h2>
                 <!-- Button to open the modal for creating a new invoice -->
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customerModal">
-                    <i class="fa-solid fa-plus"></i> Tạo hóa đơn mới
+                    Tạo hóa đơn mới
                 </button>
 
                 <!-- Modal for customer input -->
@@ -70,7 +70,7 @@
                                         <label for="customerPhone" class="form-label">Số Điện Thoại</label>
                                         <input type="text" class="form-control" id="customerPhone" name="sdt" required>
                                     </div>
-                                    <button type="submit" class="btn btn-primary"> <i class="fa-solid fa-plus"></i> Tạo hóa đơn</button>
+                                    <button type="submit" class="btn btn-primary">Tạo hóa đơn</button>
                                 </form>
                             </div>
                         </div>
@@ -136,7 +136,7 @@
                                 <td>${hdct.getFormattedTongTien()}</td>
                                 <td>
                                     <a href="/ban-hang/xoa/hdct/${hdct.id}/${selectedHoaDonId}">
-                                        <button class="btn btn-danger"> <i class="fa-solid fa-trash"></i> Xóa</button>
+                                        <button class="btn btn-danger">Xóa</button>
                                     </a>
                                 </td>
                             </tr>
@@ -158,7 +158,7 @@
                 <form action="/ban-hang/thanh-toan" method="post">
                     <input type="hidden" name="hoaDonId" value="${hoaDon.id}"/>
                     <input type="hidden" id="paymentAmount" name="soTienKhachTra" value="0"/>
-                    <button type="submit" class="btn btn-success"> <i class="fa-regular fa-credit-card"></i> Thanh toán</button>
+                    <button type="submit" class="btn btn-success">Thanh toán</button>
                 </form>
 
                 <div>
