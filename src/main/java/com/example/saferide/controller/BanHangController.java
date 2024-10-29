@@ -168,6 +168,22 @@ public class BanHangController {
         return ResponseEntity.ok("Xóa thành công <3");
     }
 
+
+        @PostMapping("/thanh-toan")
+        public ResponseEntity<?> thanhToan(@RequestParam(required = false) Integer hoaDonId,
+                                           @RequestParam BigDecimal soTienKhachTra, Model model) {
+            if (hoaDonId == null) {
+                model.addAttribute("error", "Hóa đơn không tồn tại. Vui lòng chọn hóa đơn hợp lệ.");
+                List<HoaDon> hoaDonList = hoaDonRepository.findAll();
+                model.addAttribute("listHoaDon", hoaDonList);
+                model.addAttribute("listSanPhamChiTiet", spChiTietRepository.findAll());
+                model.addAttribute("listHoaDonChiTiet", null);  // Đặt giá trị ban đầu là null
+            }
+
+            // Retrieve the invoice and its details
+            HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
+                    .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
+
     @PostMapping("/thanh-toan")
     public ResponseEntity<?> thanhToan(@RequestParam(required = false) Integer hoaDonId, @RequestParam BigDecimal soTienKhachTra, Model model) {
         if (hoaDonId == null) {
@@ -181,39 +197,40 @@ public class BanHangController {
         // Retrieve the invoice and its details
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonId).orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
 
-        List<HoaDonChiTiet> listHoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonId(hoaDonId);
 
-        // Check if there are any product details in the invoice
-        if (listHoaDonChiTiet.isEmpty()) {
-            model.addAttribute("error", "Hóa đơn này không có sản phẩm nào. Vui lòng thêm sản phẩm trước khi thanh toán.");
-//            return selectInvoice(hoaDonId, model);
-        }
+            List<HoaDonChiTiet> listHoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonId(hoaDonId);
 
-        // Check the payment amount
-        if (soTienKhachTra.compareTo(hoaDon.getTongTien()) < 0) {
-            model.addAttribute("error", "Số tiền khách trả không đủ. Vui lòng kiểm tra lại.");
-//            return selectInvoice(hoaDonId, model);
-        }
-
-        // Process the payment
-        hoaDon.setTt("Đã thanh toán");
-        hoaDonRepository.save(hoaDon);
-
-        // Update product stock
-        for (HoaDonChiTiet hdct : listHoaDonChiTiet) {
-            SPChiTiet spChiTiet = hdct.getIdSPCT();
-
-            if (spChiTiet.getSl() < hdct.getSl()) {
-                model.addAttribute("error", "Số lượng tồn kho không đủ cho sản phẩm: " + spChiTiet.getIdSanPham().getTen());
-//                return selectInvoice(hoaDonId, model);
+            // Check if there are any product details in the invoice
+            if (listHoaDonChiTiet.isEmpty()) {
+                model.addAttribute("error", "Hóa đơn này không có sản phẩm nào. Vui lòng thêm sản phẩm trước khi thanh toán.");
+    //            return selectInvoice(hoaDonId, model);
             }
 
-            spChiTiet.setSl(spChiTiet.getSl() - hdct.getSl());
-            spChiTietRepository.save(spChiTiet);
+            // Check the payment amount
+            if (soTienKhachTra.compareTo(hoaDon.getTongTien()) < 0) {
+                model.addAttribute("error", "Số tiền khách trả không đủ. Vui lòng kiểm tra lại.");
+    //            return selectInvoice(hoaDonId, model);
+            }
+
+            // Process the payment
+            hoaDon.setTt("Đã thanh toán");
+            hoaDonRepository.save(hoaDon);
+
+            // Update product stock
+            for (HoaDonChiTiet hdct : listHoaDonChiTiet) {
+                SPChiTiet spChiTiet = hdct.getIdSPCT();
+
+                if (spChiTiet.getSl() < hdct.getSl()) {
+                    model.addAttribute("error", "Số lượng tồn kho không đủ cho sản phẩm: " + spChiTiet.getIdSanPham().getTen());
+    //                return selectInvoice(hoaDonId, model);
+                }
+
+                spChiTiet.setSl(spChiTiet.getSl() - hdct.getSl());
+                spChiTietRepository.save(spChiTiet);
+            }
+            hoaDonRepository.deleteById(hoaDonId);
+            return ResponseEntity.ok("Thanh toán thành công");
         }
-        hoaDonRepository.deleteById(hoaDonId);
-        return ResponseEntity.ok("Thanh toán thành công");
-    }
 
 
 }

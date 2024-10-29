@@ -23,7 +23,7 @@ public class SPChiTiet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "ma")
+    @Column(name = "MaSPCT")
     private String ma;
 
     @ManyToOne
@@ -64,12 +64,12 @@ public class SPChiTiet {
 
     @Column(name = "soluong")
     private int sl;
+  
+    @Column(name = "DonGia", precision = 10, scale = 2)
+   private BigDecimal donGia;
 
     @Column(name = "motachitiet")
     private String moTaCT;
-
-    @Column(name = "dongia", precision = 10, scale = 2)
-    private BigDecimal donGia;
 
     public String getFormattedGia() {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
