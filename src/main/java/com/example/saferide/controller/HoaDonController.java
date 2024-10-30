@@ -2,9 +2,12 @@ package com.example.saferide.controller;
 
 import com.example.saferide.entity.HoaDon;
 import com.example.saferide.repository.HoaDonRepository;
+import com.example.saferide.response.InvoiceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/hoa-don")
@@ -15,7 +18,9 @@ public class HoaDonController {
 
     @GetMapping("/danh-sach")
     public ResponseEntity<?> getList() {
-        return ResponseEntity.ok(hdRepository.findAll());
+        InvoiceResponse<HoaDon> listHoaDon = new InvoiceResponse<>();
+        listHoaDon.data = hdRepository.findAll();
+        return ResponseEntity.ok(listHoaDon);
     }
 
 //
