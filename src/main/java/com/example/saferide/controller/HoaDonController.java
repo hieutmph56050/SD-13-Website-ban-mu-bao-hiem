@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
+
 @RestController
 @RequestMapping("/hoa-don")
 public class HoaDonController {
@@ -19,7 +21,7 @@ public class HoaDonController {
     @GetMapping("/danh-sach")
     public ResponseEntity<?> getList() {
         InvoiceResponse<HoaDon> listHoaDon = new InvoiceResponse<>();
-        listHoaDon.data = hdRepository.findAll();
+        listHoaDon.data = hdRepository.findAll().stream().sorted(Comparator.comparing(HoaDon::getMa).reversed()).toList();
         return ResponseEntity.ok(listHoaDon);
     }
 
