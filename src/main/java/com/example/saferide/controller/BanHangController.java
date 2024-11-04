@@ -169,21 +169,6 @@ public class BanHangController {
     }
 
 
-        @PostMapping("/thanh-toan")
-        public ResponseEntity<?> thanhToan(@RequestParam(required = false) Integer hoaDonId,
-                                           @RequestParam BigDecimal soTienKhachTra, Model model) {
-            if (hoaDonId == null) {
-                model.addAttribute("error", "Hóa đơn không tồn tại. Vui lòng chọn hóa đơn hợp lệ.");
-                List<HoaDon> hoaDonList = hoaDonRepository.findAll();
-                model.addAttribute("listHoaDon", hoaDonList);
-                model.addAttribute("listSanPhamChiTiet", spChiTietRepository.findAll());
-                model.addAttribute("listHoaDonChiTiet", null);  // Đặt giá trị ban đầu là null
-            }
-
-            // Retrieve the invoice and its details
-            HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
-                    .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
-
     @PostMapping("/thanh-toan")
     public ResponseEntity<?> thanhToan(@RequestParam(required = false) Integer hoaDonId, @RequestParam BigDecimal soTienKhachTra, Model model) {
         if (hoaDonId == null) {
