@@ -9,6 +9,7 @@ import com.example.saferide.repository.HoaDonChiTietRepository;
 import com.example.saferide.repository.HoaDonRepository;
 import com.example.saferide.repository.SPChiTietRepository;
 import com.example.saferide.repository.TaiKhoanRepository;
+import com.example.saferide.request.ThanhToanRequest;
 import com.example.saferide.request.ThemSanPhamRequest;
 import com.example.saferide.response.InvoiceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,52 +154,49 @@ public class BanHangController {
     }
 
     @PostMapping("/thanh-toan")
-    public ResponseEntity<?> thanhToan(@RequestParam(required = false) Integer hoaDonId, @RequestParam BigDecimal soTienKhachTra, Model model) {
-        if (hoaDonId == null) {
-            model.addAttribute("error", "Hóa đơn không tồn tại. Vui lòng chọn hóa đơn hợp lệ.");
-            List<HoaDon> hoaDonList = hoaDonRepository.findAll();
-            model.addAttribute("listHoaDon", hoaDonList);
-            model.addAttribute("listSanPhamChiTiet", spChiTietRepository.findAll());
-            model.addAttribute("listHoaDonChiTiet", null);  // Đặt giá trị ban đầu là null
+    public ResponseEntity<?> thanhToan(@RequestBody ThanhToanRequest request) {
+        String maHD = request.getMaHoaDon();
+        BigDecimal soTienKhachTra = request.getSoTienKhachTra();
+
+        // Kiểm tra mã hóa đơn
+        if (maHD == null) {
+            return ResponseEntity.badRequest().body("Hóa đơn không tồn tại. Vui lòng chọn hóa đơn hợp lệ.");
         }
 
-        // Retrieve the invoice and its details
-        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId).orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
+        // Lấy hóa đơn và chi tiết hóa đơn
+        HoaDon hoaDon = hoaDonRepository.findByMaHoaDon(maHD)
+                .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
 
+        List<HoaDonChiTiet> listHoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonId(hoaDon.getId());
 
-        List<HoaDonChiTiet> listHoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonId(hoaDonId);
-
-        // Check if there are any product details in the invoice
+        // Kiểm tra xem hóa đơn có sản phẩm không
         if (listHoaDonChiTiet.isEmpty()) {
-            model.addAttribute("error", "Hóa đơn này không có sản phẩm nào. Vui lòng thêm sản phẩm trước khi thanh toán.");
-            //            return selectInvoice(hoaDonId, model);
+            return ResponseEntity.badRequest().body("Hóa đơn này không có sản phẩm nào. Vui lòng thêm sản phẩm trước khi thanh toán.");
         }
 
-        // Check the payment amount
+        // Kiểm tra số tiền khách trả
+
         if (soTienKhachTra.compareTo(hoaDon.getTongTien()) < 0) {
-            model.addAttribute("error", "Số tiền khách trả không đủ. Vui lòng kiểm tra lại.");
-            //            return selectInvoice(hoaDonId, model);
+            return ResponseEntity.badRequest().body("Số tiền khách trả không đủ. Vui lòng kiểm tra lại.");
         }
 
-        // Process the payment
+        // Xử lý thanh toán
         hoaDon.setTt("Đã thanh toán");
+        hoaDon.setSoTienDaTra(soTienKhachTra);
         hoaDonRepository.save(hoaDon);
 
-        // Update product stock
+        // Cập nhật tồn kho sản phẩm
         for (HoaDonChiTiet hdct : listHoaDonChiTiet) {
             SPChiTiet spChiTiet = hdct.getIdSPCT();
 
             if (spChiTiet.getSl() < hdct.getSl()) {
-                model.addAttribute("error", "Số lượng tồn kho không đủ cho sản phẩm: " + spChiTiet.getIdSanPham().getTen());
-                //                return selectInvoice(hoaDonId, model);
+                return ResponseEntity.badRequest().body("Số lượng tồn kho không đủ cho sản phẩm: " + spChiTiet.getIdSanPham().getTen());
             }
 
             spChiTiet.setSl(spChiTiet.getSl() - hdct.getSl());
             spChiTietRepository.save(spChiTiet);
         }
-        hoaDonRepository.deleteById(hoaDonId);
         return ResponseEntity.ok("Thanh toán thành công");
     }
-
 
 }

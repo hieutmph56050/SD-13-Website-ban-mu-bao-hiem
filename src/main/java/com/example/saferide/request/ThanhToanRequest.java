@@ -7,9 +7,8 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class ThemSanPhamRequest {
-    // Getters and setters
+public class ThanhToanRequest {
+    // Getters và Setters
     private String maHoaDon;
-    private Integer sanPhamId;
-    private BigDecimal soLuong;
+    private BigDecimal soTienKhachTra;
 }
