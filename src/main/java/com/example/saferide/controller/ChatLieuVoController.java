@@ -2,21 +2,34 @@ package com.example.saferide.controller;
 
 
 import com.example.saferide.entity.ChatLieuVo;
+import com.example.saferide.response.ProductResponse;
 import com.example.saferide.service.ChatLieuVoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
-@RequestMapping("/api/chatlieuvo")
+@RequestMapping("/chatlieuvo")
 public class ChatLieuVoController {
     @Autowired
     ChatLieuVoService service;
 
-    @GetMapping
-    public ResponseEntity<?> getAll(){
-        return ResponseEntity.ok(service.getList());
+    @GetMapping("/danhsach")
+    public ResponseEntity<?> getAll() {
+        ProductResponse<ChatLieuVo> listChatLieuVo = new ProductResponse<>();
+        listChatLieuVo.data = service.getList();
+        return ResponseEntity.ok(listChatLieuVo);
+    }
+
+    @RequestMapping("/index")
+    public String showChatLieuVoList(Model model) {
+        List<ChatLieuVo> listChatLieuVo = service.getList();
+        model.addAttribute("list", listChatLieuVo);
+        return "chatlieuvo/index";
     }
 
     @PostMapping("/add")

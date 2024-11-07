@@ -12,7 +12,11 @@ public class CORSConfiguration {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedHeaders("*").allowedMethods("*").allowedOrigins("*").exposedHeaders("Content-Disposition");
+                registry.addMapping("/**")
+                        .allowedHeaders("*")
+                        .allowedMethods("*")
+                        .allowedOrigins("*")
+                        .exposedHeaders("Content-Disposition");
             }
         };
     }

@@ -28,7 +28,7 @@
         <c:forEach items="${list}" var="hoadonchitiet" varStatus="i">
             <tr>
                 <td>${i.index + 1}</td>
-                <td>${hoadonchitiet.ma}</td>
+                <td>${hoadonchitiet.mahdct}</td>
                 <td>${hoadonchitiet.idHoaDon.ma}</td>
                 <td>${hoadonchitiet.idSPCT.ma}</td>
                 <td>${hoadonchitiet.tongTien}</td>
