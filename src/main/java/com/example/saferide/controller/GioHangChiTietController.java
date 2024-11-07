@@ -1,21 +1,34 @@
 package com.example.saferide.controller;
 
 import com.example.saferide.entity.GioHangChiTiet;
+import com.example.saferide.response.ProductResponse;
 import com.example.saferide.service.GioHangChiTietService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
-@RequestMapping("/api/giohangchitiet")
+@RequestMapping("/giohangchitiet")
 public class GioHangChiTietController {
     @Autowired
     GioHangChiTietService service;
 
-    @GetMapping
-    public ResponseEntity<?> getAll(){
-        return ResponseEntity.ok(service.getList());
+    @GetMapping("/danhsach")
+    public ResponseEntity<?> getAll() {
+        ProductResponse<GioHangChiTiet> listGioHangChiTiet = new ProductResponse<>();
+        listGioHangChiTiet.data = service.getList();
+        return ResponseEntity.ok(listGioHangChiTiet);
+    }
+
+    @RequestMapping("/index")
+    public String showGHCTList(Model model) {
+        List<GioHangChiTiet> listGioHangChiTiet = service.getList();
+        model.addAttribute("list", listGioHangChiTiet);
+        return "giohangchitiet/index";
     }
 
     @PostMapping("/add")

@@ -1,23 +1,35 @@
 package com.example.saferide.controller;
 
 import com.example.saferide.entity.KhuyenMai;
+import com.example.saferide.response.ProductResponse;
 import com.example.saferide.service.KhuyenMaiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
-@RequestMapping("/api/khuyenmai")
+@RequestMapping("/khuyenmai")
 public class KhuyenMaiController {
     @Autowired
     KhuyenMaiService service;
 
-    @GetMapping
-    public ResponseEntity<?> getAll(){
-        return ResponseEntity.ok(service.getList());
+    @GetMapping("/danhsach")
+    public ResponseEntity<?> getAll() {
+        ProductResponse<KhuyenMai> listKhuyenMai = new ProductResponse<>();
+        listKhuyenMai.data = service.getList();
+        return ResponseEntity.ok(listKhuyenMai);
     }
 
+    @RequestMapping("/index")
+    public String showKhuyenMaiList(Model model) {
+        List<KhuyenMai> listKhuyenMai = service.getList();
+        model.addAttribute("list", listKhuyenMai);
+        return "khuyenmai/index";
+    }
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody KhuyenMai khuyenMai){
         return ResponseEntity.ok(service.add(khuyenMai));

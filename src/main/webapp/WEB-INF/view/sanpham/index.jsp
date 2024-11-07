@@ -1,45 +1,43 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix = "c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-<html>
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-    <title>Sản Phẩm</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>Danh Sách Sản Phẩm</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/sanpham/danhsach')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.data && data.data.length > 0) {
+                        let table = document.getElementById('productTable');
+                        data.data.forEach(product => {
+                            let row = table.insertRow();
+                            let cell1 = row.insertCell(0);
+                            let cell2 = row.insertCell(1);
+                            let cell3 = row.insertCell(2);
+                            let cell4 = row.insertCell(3);
+                            cell1.innerHTML = product.id; // Đảm bảo thuộc tính đúng với đối tượng SanPham
+                            cell2.innerHTML = product.ten; // Đảm bảo thuộc tính đúng với đối tượng SanPham
+                            cell3.innerHTML = product.tt; // Đảm bảo thuộc tính đúng với đối tượng SanPham
+                            cell4.innerHTML = product.moTa; // Đảm bảo thuộc tính đúng với đối tượng SanPham
+                        });
+                    } else {
+                        console.error('Không có dữ liệu sản phẩm nào.');
+                    }
+                })
+                .catch(error => console.error('Lỗi khi lấy dữ liệu:', error));
+        });
+    </script>
 </head>
-<body class="container">
-<h2 align="center">Sản Phẩm</h2>
-<div>
-    <div><button><a href="/sanpham/index/add">Thêm Sản Phẩm</a></button></div>
-</div>
-
-    <table class="table">
-        <tr>
-            <th>STT</th>
-            <th>Tên Sản Phẩm</th>
-            <th>Mô Tả</th>
-            <th>Trạng Thái</th>
-<%--            <th>Ngày Tạo</th>--%>
-<%--            <th>Ngày Cập Nhật</th>--%>
-            <th colspan="3">Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <c:forEach items="${list}" var="sanpham" varStatus="i">
-            <tr>
-                <td>${i.index + 1}</td>
-                <td>${sanpham.ten}</td>
-                <td>${sanpham.moTa}</td>
-                <td>${sanpham.tt}</td>
-<%--                <td>${sanpham.ngayTao}</td>--%>
-<%--                <td>${sanpham.ngayCapNhat}</td>--%>
-                <td colspan="3">
-                    <a href="/sanpham/index/detail/${sanpham.id}">Xem</a>
-                    <a href="/sanpham/index/update/${sanpham.id}">Sửa</a>
-                    <a href="/sanpham/index/delete?id=${sanpham.id}">Xoá</a>
-                </td>
-            </tr>
-        </c:forEach>
-        </tbody>
-    </table>
+<body>
+<h1>Danh Sách Sản Phẩm</h1>
+<table id="productTable" border="1">
+    <tr>
+        <th>ID</th>
+        <th>Tên Sản Phẩm</th>
+        <th>Trạng Thái</th>
+        <th>Mô Tả</th>
+    </tr>
+</table>
 </body>
 </html>
