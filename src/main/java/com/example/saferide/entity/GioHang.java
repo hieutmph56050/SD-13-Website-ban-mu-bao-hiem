@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,17 +31,20 @@ public class GioHang {
     @Column(name = "ngaytao")
     private LocalDateTime ngayTao;
 
-//    @Temporal(TemporalType.TIMESTAMP)
+    @OneToMany(mappedBy = "idGioHang", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<GioHangChiTiet> gioHangChiTietList;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @Column(name = "ngaycapnhat")
     private LocalDateTime ngayCapNhat;
 
     @PrePersist
     protected void onCreate() {
-        ngayTao = LocalDateTime.now(); // Gán thời gian hiện tại
+        ngayTao = LocalDateTime.now();
     }
+
     @PreUpdate
     protected void onUpdate() {
-        ngayCapNhat =LocalDateTime.now(); // Gán thời gian hiện tại khi cập nhật
+        ngayCapNhat = LocalDateTime.now();
     }
 }

@@ -21,12 +21,12 @@ public class GioHangChiTiet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @ManyToOne
     @JoinColumn(name = "id_giohang", referencedColumnName = "id")
-    @ManyToOne
-    private GioHang idGioHang;
+    private GioHang idGioHang;  // Changed field name to match the GioHang entity
 
-    @JoinColumn(name = "ID_SPCT", referencedColumnName = "id")
     @ManyToOne
+    @JoinColumn(name = "ID_SPCT", referencedColumnName = "id")
     private SPChiTiet idSPCT;
 
     @Column(name = "ma")
@@ -41,18 +41,18 @@ public class GioHangChiTiet {
     @Column(name = "ngaytao")
     private LocalDateTime ngayTao;
 
-//    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @Column(name = "ngaycapnhat")
     private LocalDateTime ngayCapNhat;
 
     @PrePersist
     protected void onCreate() {
-        ngayTao = LocalDateTime.now(); // Gán thời gian hiện tại
+        ngayTao = LocalDateTime.now();
     }
+
     @PreUpdate
     protected void onUpdate() {
-        ngayCapNhat = LocalDateTime.now(); // Gán thời gian hiện tại khi cập nhật
+        ngayCapNhat = LocalDateTime.now();
     }
 
     @Column(name = "trangthai")

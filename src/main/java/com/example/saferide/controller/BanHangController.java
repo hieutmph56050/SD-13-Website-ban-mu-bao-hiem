@@ -42,7 +42,7 @@ public class BanHangController {
     private TaiKhoanRepository taiKhoanRepository;
 
     @PostMapping("/them-hoa-don")
-    public ResponseEntity<?> themHoaDon(HoaDon hoaDon, Model model, @RequestBody(required = false) String tenKhachHang, @RequestBody(required = false) String sdt) {
+    public ResponseEntity<?> themHoaDon(HoaDon hoaDon, @RequestBody(required = false) String tenKhachHang, @RequestBody(required = false) String sdt) {
         String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMdHms"));
         LocalDateTime fakedata = LocalDateTime.now();
         hoaDon.setMa("HD" + timeStamp);
@@ -65,23 +65,40 @@ public class BanHangController {
         return ResponseEntity.ok(hoaDonSaved);
     }
 
-    @GetMapping("/chon-hoa-don/{hoaDonId}")
-    public ResponseEntity<?> selectInvoice(@PathVariable Integer hoaDonId) {
-        // Retrieve the invoice based on the ID
-        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId).orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
 
+//    @GetMapping("/chon-hoa-don/{hoaDonId}")
+//    public ResponseEntity<?> selectInvoice(@PathVariable Integer hoaDonId) {
+//        // Retrieve the invoice based on the ID        @GetMapping("/chon-hoa-don/{hoaDonId}")
+//    public ResponseEntity<?> selectInvoice(@PathVariable Integer hoaDonId) {
+//        // Retrieve the invoice based on the ID
+//        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId).orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
+//
+////        List<HoaDonChiTiet> listHoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonId(hoaDonId);
+//
+//        // Create a response object to hold the data
+//        InvoiceResponse response = new InvoiceResponse();
+//        response.setHoaDon(hoaDon);
+////        response.setListHoaDonChiTiet(listHoaDonChiTiet);
+//        response.setSelectedHoaDonId(hoaDonId);
+//        response.setListHoaDon(hoaDonRepository.findAll());
+////        response.setListSanPhamChiTiet(spChiTietRepository.findAll());
+//
+//        return ResponseEntity.ok(response); // Return 200 OK with the response body
+//    }
+//        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
+//                .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
+//
 //        List<HoaDonChiTiet> listHoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonId(hoaDonId);
-
-        // Create a response object to hold the data
-        InvoiceResponse response = new InvoiceResponse();
-        response.setHoaDon(hoaDon);
+//
+//        InvoiceResponse response = new InvoiceResponse();
+//        response.setHoaDon(hoaDon);
 //        response.setListHoaDonChiTiet(listHoaDonChiTiet);
-        response.setSelectedHoaDonId(hoaDonId);
-        response.setListHoaDon(hoaDonRepository.findAll());
+//        response.setSelectedHoaDonId(hoaDonId);
+//        response.setListHoaDon(hoaDonRepository.findAll());
 //        response.setListSanPhamChiTiet(spChiTietRepository.findAll());
-
-        return ResponseEntity.ok(response); // Return 200 OK with the response body
-    }
+//
+//        return ResponseEntity.ok(response); // Return 200 OK with the response body
+//    }
 
     @PostMapping("/them-san-pham")
     public ResponseEntity<?> themSanPham(Integer hoaDonId, Integer sanPhamId, BigDecimal soLuong, Model model) {
@@ -183,39 +200,39 @@ public class BanHangController {
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonId).orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
 
 
-            List<HoaDonChiTiet> listHoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonId(hoaDonId);
+        List<HoaDonChiTiet> listHoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonId(hoaDonId);
 
-            // Check if there are any product details in the invoice
-            if (listHoaDonChiTiet.isEmpty()) {
-                model.addAttribute("error", "Hóa đơn này không có sản phẩm nào. Vui lòng thêm sản phẩm trước khi thanh toán.");
-    //            return selectInvoice(hoaDonId, model);
-            }
-
-            // Check the payment amount
-            if (soTienKhachTra.compareTo(hoaDon.getTongTien()) < 0) {
-                model.addAttribute("error", "Số tiền khách trả không đủ. Vui lòng kiểm tra lại.");
-    //            return selectInvoice(hoaDonId, model);
-            }
-
-            // Process the payment
-            hoaDon.setTt("Đã thanh toán");
-            hoaDonRepository.save(hoaDon);
-
-            // Update product stock
-            for (HoaDonChiTiet hdct : listHoaDonChiTiet) {
-                SPChiTiet spChiTiet = hdct.getIdSPCT();
-
-                if (spChiTiet.getSl() < hdct.getSl()) {
-                    model.addAttribute("error", "Số lượng tồn kho không đủ cho sản phẩm: " + spChiTiet.getIdSanPham().getTen());
-    //                return selectInvoice(hoaDonId, model);
-                }
-
-                spChiTiet.setSl(spChiTiet.getSl() - hdct.getSl());
-                spChiTietRepository.save(spChiTiet);
-            }
-            hoaDonRepository.deleteById(hoaDonId);
-            return ResponseEntity.ok("Thanh toán thành công");
+        // Check if there are any product details in the invoice
+        if (listHoaDonChiTiet.isEmpty()) {
+            model.addAttribute("error", "Hóa đơn này không có sản phẩm nào. Vui lòng thêm sản phẩm trước khi thanh toán.");
+            //            return selectInvoice(hoaDonId, model);
         }
+
+        // Check the payment amount
+        if (soTienKhachTra.compareTo(hoaDon.getTongTien()) < 0) {
+            model.addAttribute("error", "Số tiền khách trả không đủ. Vui lòng kiểm tra lại.");
+            //            return selectInvoice(hoaDonId, model);
+        }
+
+        // Process the payment
+        hoaDon.setTt("Đã thanh toán");
+        hoaDonRepository.save(hoaDon);
+
+        // Update product stock
+        for (HoaDonChiTiet hdct : listHoaDonChiTiet) {
+            SPChiTiet spChiTiet = hdct.getIdSPCT();
+
+            if (spChiTiet.getSl() < hdct.getSl()) {
+                model.addAttribute("error", "Số lượng tồn kho không đủ cho sản phẩm: " + spChiTiet.getIdSanPham().getTen());
+                //                return selectInvoice(hoaDonId, model);
+            }
+
+            spChiTiet.setSl(spChiTiet.getSl() - hdct.getSl());
+            spChiTietRepository.save(spChiTiet);
+        }
+        hoaDonRepository.deleteById(hoaDonId);
+        return ResponseEntity.ok("Thanh toán thành công");
+    }
 
 
 }
