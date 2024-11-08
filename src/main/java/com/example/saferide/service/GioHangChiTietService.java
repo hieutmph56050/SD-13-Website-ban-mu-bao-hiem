@@ -1,49 +1,20 @@
 package com.example.saferide.service;
 
+import com.example.saferide.entity.GioHang;
 import com.example.saferide.entity.GioHangChiTiet;
 import com.example.saferide.repository.GioHangChiTietRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GioHangChiTietService {
-    @Autowired
-    GioHangChiTietRepository sanphamRepository;
+        @Autowired
+        private GioHangChiTietRepository gioHangChiTietRepository;
 
-    public List<GioHangChiTiet> getList() {
-        return sanphamRepository.findAll();
-    }
+        public List<GioHangChiTiet> getGioHangChiTietByGioHang(GioHang gioHang) {
+            return gioHangChiTietRepository.findByIdGioHang(gioHang);
+        }
 
-    public GioHangChiTiet findById(Integer id) {
-        return sanphamRepository.findById(id).get();
-    }
-
-    public GioHangChiTiet add(GioHangChiTiet sanPham) {
-        return sanphamRepository.save(sanPham);
-    }
-
-    public GioHangChiTiet update(GioHangChiTiet sanPham, Integer id) {
-        Optional<GioHangChiTiet> optional = sanphamRepository.findById(id);
-        return optional.map(sanPham1 -> {
-            sanPham1.setIdGioHang(sanPham.getIdGioHang());
-            sanPham1.setIdSPCT(sanPham.getIdSPCT());
-            sanPham1.setMa(sanPham.getMa());
-            sanPham1.setDonGia(sanPham.getDonGia());
-            sanPham1.setSl(sanPham.getSl());
-            sanPham1.setNgayCapNhat(LocalDateTime.now());
-            sanPham1.setTt(sanPham.getTt());
-            return sanphamRepository.save(sanPham1);
-        }).orElse(null);
-    }
-    public GioHangChiTiet delete(Integer id) {
-        Optional<GioHangChiTiet> optional = sanphamRepository.findById(id);
-        return optional.map(sanPham1 -> {
-            sanphamRepository.delete(sanPham1);
-            return sanPham1;
-        }).orElse(null);
-    }
 }

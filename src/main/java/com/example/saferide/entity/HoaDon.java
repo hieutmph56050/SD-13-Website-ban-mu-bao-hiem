@@ -21,7 +21,7 @@ import java.util.Locale;
 public class HoaDon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name = "maHoaDon")
     private String ma;
@@ -34,8 +34,8 @@ public class HoaDon {
     @ManyToOne
     private Voucher idVoucher;
 
-    @Column(name = "loaihoadon", columnDefinition = "BIT")
-    private Integer loaiHoaDon;
+    @Column(name = "loaihoadon")
+    private String loaiHoaDon;
 
     @Column(name = "ngaygiaohang")
     private LocalDateTime ngayGiaoHang;
@@ -63,7 +63,7 @@ public class HoaDon {
     @Column(name = "diachi")
     private String diaChi;
 
-    @Column(name = "trangthai", columnDefinition = "BIT")
+    @Column(name = "trangthai")
     private String tt;
 
     @Column(name = "ngaytao")
