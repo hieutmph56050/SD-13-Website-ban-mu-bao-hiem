@@ -1,21 +1,34 @@
 package com.example.saferide.controller;
 
 import com.example.saferide.entity.VaiTro;
+import com.example.saferide.response.ProductResponse;
 import com.example.saferide.service.VaiTroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
-@RequestMapping("/api/vaitro")
+@RequestMapping("/vaitro")
 public class VaiTroController {
     @Autowired
     VaiTroService service;
 
-    @GetMapping
-    public ResponseEntity<?> getAll(){
-        return ResponseEntity.ok(service.getList());
+    @GetMapping("/danhsach")
+    public ResponseEntity<?> getAll() {
+        ProductResponse<VaiTro> listVaiTro = new ProductResponse<>();
+        listVaiTro.data = service.getList();
+        return ResponseEntity.ok(listVaiTro);
+    }
+
+    @RequestMapping("/index")
+    public String showVaiTroList(Model model) {
+        List<VaiTro> listVaiTro = service.getList();
+        model.addAttribute("list", listVaiTro);
+        return "vaitro/index";
     }
 
     @PostMapping("/add")

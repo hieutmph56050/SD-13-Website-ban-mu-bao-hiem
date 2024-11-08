@@ -10,22 +10,22 @@
     <title>Trang Chủ</title>
 </head>
 <body class="container">
-    <div><a href="/sanpham/index/list">Sản phẩm</a></div>
-    <div><a href="/spchitiet/index/list">Sản phẩm chi tiết</a></div>
-    <div><a href="/taikhoan/index/list">Tài khoản</a></div>
-    <div><a href="/vaitro/index/list">Vai trò</a></div>
-    <div><a href="/hoadon/index/list">Hóa đơn</a></div>
-    <div><a href="/hoadonchitiet/index/list">Hóa đơn chi tiết</a></div>
-    <div><a href="/mausac/index/list">Màu sắc</a></div>
-    <div><a href="/kichthuoc/index/list">Kích thước</a></div>
-    <div><a href="/thuonghieu/index/list">Thương hiệu</a></div>
-    <div><a href="/loaimu/index/list">Loại Mũ</a></div>
-    <div><a href="/loaikinh/index/list">Loại Kính</a></div>
-    <div><a href="/chatlieuvo/index/list">Chất Liệu Vỏ</a></div>
-    <div><a href="/chatlieudem/index/list">Chất Liệu Đệm</a></div>
-    <div><a href="/khuyenmai/index/list">Khuyến mãi</a></div>
-    <div><a href="/voucher/index/list">Voucher</a></div>
-    <div><a href="/thanhtoan/index/list">Thanh toán</a></div>
+    <div><a href="/sanpham/index">Sản phẩm</a></div>
+    <div><a href="/spchitiet/index">Sản phẩm chi tiết</a></div>
+    <div><a href="/taikhoan/index">Tài khoản</a></div>
+    <div><a href="/vaitro/index">Vai trò</a></div>
+    <div><a href="/hoadon/index">Hóa đơn</a></div>
+    <div><a href="/hoadonchitiet/index">Hóa đơn chi tiết</a></div>
+    <div><a href="/mausac/index">Màu sắc</a></div>
+    <div><a href="/kichthuoc/index">Kích thước</a></div>
+    <div><a href="/thuonghieu/index">Thương hiệu</a></div>
+    <div><a href="/loaimu/index">Loại Mũ</a></div>
+    <div><a href="/loaikinh/index">Loại Kính</a></div>
+    <div><a href="/chatlieuvo/index">Chất Liệu Vỏ</a></div>
+    <div><a href="/chatlieudem/index">Chất Liệu Đệm</a></div>
+    <div><a href="/khuyenmai/index">Khuyến mãi</a></div>
+    <div><a href="/voucher/index">Voucher</a></div>
+    <div><a href="/thanhtoan/index">Thanh toán</a></div>
     <div><a href="/ban-hang/hien-thi">Bán hàng</a></div>
 </body>
 </html>
