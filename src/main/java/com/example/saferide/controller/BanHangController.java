@@ -12,6 +12,7 @@ import com.example.saferide.repository.TaiKhoanRepository;
 import com.example.saferide.request.ThanhToanRequest;
 import com.example.saferide.request.ThemSanPhamRequest;
 import com.example.saferide.response.InvoiceResponse;
+import com.example.saferide.response.ProductInInvoiceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -21,7 +22,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,7 +72,15 @@ public class BanHangController {
         if (response.data == null) {
             response.data = new ArrayList<>();
         }
-        response.data.add(0,hoaDon);
+        response.data.add(0, hoaDon);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/hoa-don/{maHoaDon}/sanpham")
+    public ResponseEntity<?> productInInvoice(@PathVariable String maHoaDon) {
+        HoaDon hoaDon = hoaDonRepository.findByMaHoaDon(maHoaDon).orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
+        ProductInInvoiceResponse<HoaDonChiTiet> response = new ProductInInvoiceResponse<>();
+        response.data = hoaDonChiTietRepository.findByHoaDonId(hoaDon.getId());
         return ResponseEntity.ok(response);
     }
 
@@ -164,8 +172,7 @@ public class BanHangController {
         }
 
         // Lấy hóa đơn và chi tiết hóa đơn
-        HoaDon hoaDon = hoaDonRepository.findByMaHoaDon(maHD)
-                .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
+        HoaDon hoaDon = hoaDonRepository.findByMaHoaDon(maHD).orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
 
         List<HoaDonChiTiet> listHoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonId(hoaDon.getId());
 
