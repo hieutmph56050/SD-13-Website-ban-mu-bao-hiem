@@ -15,11 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "giohang")
+@Table(name = "GioHang")
 public class GioHang {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "id_taikhoan", referencedColumnName = "id")

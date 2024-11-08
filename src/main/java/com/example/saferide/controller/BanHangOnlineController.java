@@ -3,11 +3,12 @@ package com.example.saferide.controller;
 import com.example.saferide.entity.*;
 import com.example.saferide.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -35,13 +36,13 @@ public class BanHangOnlineController {
     private HoaDonChiTietRepository hoaDonChiTietRepository;
 
     @DeleteMapping("/xoa/{id}")
-    public ResponseEntity<?> xoaGioHang(@PathVariable Integer id){
+    public ResponseEntity<?> xoaGioHang(@PathVariable Integer id) {
         gioHangRepository.deleteById(id);
         return ResponseEntity.ok("Xóa thành công");
     }
 
     @GetMapping("/hien-thi")
-    public ResponseEntity<?> hienThiGioHang(){
+    public ResponseEntity<?> hienThiGioHang() {
         return ResponseEntity.ok(gioHangChiTietRepository.findAll());
     }
 
@@ -130,7 +131,7 @@ public class BanHangOnlineController {
         hoaDon.setIdTaiKhoan(taiKhoan);
         hoaDon.setNgayTao(LocalDateTime.now());
         hoaDon.setTongTien(tongTien);
-        hoaDon.setLoaiHoaDon(Integer.parseInt("Hóa Đơn Online"));
+//        hoaDon.setLoaiHoaDon(Integer.parseInt("Hóa Đơn Online"));
         String diaChi = soNha + ", Xã " + xa + ", Huyện " + huyen + ", " + thanhPho;
         hoaDon.setDiaChi(diaChi);
         hoaDon.setTt("Chưa thanh toán");  // Đơn hàng chưa thanh toán
@@ -165,6 +166,46 @@ public class BanHangOnlineController {
     @PostMapping("/thanh-toan")
     public ResponseEntity<?> thanhToanOnline(@RequestParam Integer hoaDonId) {
         // Kiểm tra hóa đơn tồn tại
+        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hóa đơn không tồn tại"));
+
+        // Cập nhật trạng thái của hóa đơn
+        hoaDon.setTt("Đã thanh toán");
+        hoaDonRepository.save(hoaDon);
+
+        Integer idTaiKhoan = hoaDon.getIdTaiKhoan().getId();
+        Optional<GioHang> gioHangOptional = gioHangRepository.findByIdTaiKhoan(idTaiKhoan);  // Lấy giỏ hàng từ tài khoản
+
+        System.out.println("ID TAI KHOAN: " + idTaiKhoan);
+        System.out.println("Giỏ hàng: " + gioHangOptional);
+
+        if (gioHangOptional.isPresent()) {
+            // Xử lý giỏ hàng nếu có
+            GioHang gioHang = gioHangOptional.get();
+
+            // Lấy tất cả chi tiết giỏ hàng
+            List<GioHangChiTiet> gioHangChiTietList = gioHangChiTietRepository.findByIdGioHang(gioHang);  // Fetch details using GioHang object
+            gioHangChiTietRepository.deleteAll(gioHangChiTietList);  // Xóa chi tiết giỏ hàng
+
+            // Xóa giỏ hàng
+            gioHangRepository.delete(gioHang);  // Xóa giỏ hàng
+
+        }
+
+        // Cập nhật trạng thái của từng chi tiết hóa đơn
+        List<HoaDonChiTiet> listHoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonId(hoaDonId);
+        for (HoaDonChiTiet hoaDonChiTiet : listHoaDonChiTiet) {
+            hoaDonChiTiet.setTt("Đã thanh toán");
+        }
+        hoaDonChiTietRepository.saveAll(listHoaDonChiTiet);  // Cập nhật chi tiết hóa đơn
+
+        return ResponseEntity.ok("Thanh toán thành công " + hoaDon.getMa());
+    }
+
+    @PostMapping("/trang-thai")
+    public ResponseEntity<?> capNhatTrangThaiHoaDon(@RequestParam Integer hoaDonId,
+                                                    @RequestParam String trangThaiMoi) {
+        // Kiểm tra hóa đơn tồn tại
         Optional<HoaDon> hoaDonOpt = hoaDonRepository.findById(hoaDonId);
         if (!hoaDonOpt.isPresent()) {
             return ResponseEntity.badRequest().body("Hóa đơn không tồn tại");
@@ -172,20 +213,24 @@ public class BanHangOnlineController {
 
         HoaDon hoaDon = hoaDonOpt.get();
 
-        // Kiểm tra trạng thái hóa đơn (phải là "Chưa thanh toán")
-        if (!hoaDon.getTt().equals("Chua thanh toán")) {
-            return ResponseEntity.badRequest().body("Hóa đơn đã được thanh toán hoặc không hợp lệ");
+        // Danh sách trạng thái hợp lệ
+        List<String> trangThaiHopLe = List.of("Đã gửi cho bên vận chuyển", "Đang giao", "Đã giao", "Hoàn thành");
+
+        // Kiểm tra xem trạng thái mới có hợp lệ không
+        if (!trangThaiHopLe.contains(trangThaiMoi)) {
+            return ResponseEntity.badRequest().body("Trạng thái không hợp lệ");
         }
 
-        // Thực hiện logic thanh toán (có thể tích hợp với cổng thanh toán)
-        // Ví dụ: Kiểm tra số dư tài khoản, thực hiện chuyển tiền, ...
+        // Cập nhật trạng thái hóa đơn
+        hoaDon.setTt(trangThaiMoi);
+        hoaDon.setNgayGiaoHang(LocalDateTime.now());
 
-        // Cập nhật trạng thái hóa đơn sau khi thanh toán thành công
-        hoaDon.setTt("Đã thanh toán");
+        if (trangThaiMoi.equals("Hoàn thành")) {
+            hoaDon.setNgayNhan(LocalDateTime.now());
+        }
         hoaDonRepository.save(hoaDon);
 
-        return ResponseEntity.ok("Thanh toán thành công cho hóa đơn: " + hoaDon.getMa());
+        return ResponseEntity.ok("Cập nhật trạng thái hóa đơn thành công: " + hoaDon.getMa());
     }
-
 
 }

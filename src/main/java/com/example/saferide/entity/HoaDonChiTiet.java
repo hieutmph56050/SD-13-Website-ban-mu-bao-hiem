@@ -21,7 +21,7 @@ import java.util.Locale;
 public class HoaDonChiTiet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @JoinColumn(name = "id_hoadon", referencedColumnName = "id")
     @ManyToOne
