@@ -488,6 +488,7 @@ VALUES
 	select * from sanpham
 	select * from chatlieuvo
 	select * from giohang
+	select * from GioHangChiTiet
 	select * from hoadon
 	select * from hoadonchitiet
 	select * from khuyenmai
@@ -500,4 +501,8 @@ VALUES
 	select * from thanhtoan
 	select * from thuonghieu
 	select * from vaitro
-	select * from voucher
+	select * from voucher;
+--Thay đổi loại hóa đơn trong bảng hóa đơn thành Nvarchar
+use SafeRide
+ALTER TABLE HoaDon
+ALTER COLUMN LoaiHoaDon nvarchar(100)

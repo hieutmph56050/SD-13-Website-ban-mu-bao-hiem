@@ -34,8 +34,8 @@ public class HoaDon {
     @ManyToOne
     private Voucher idVoucher;
 
-    @Column(name = "loaihoadon", columnDefinition = "BIT")
-    private Integer loaiHoaDon;
+    @Column(name = "loaihoadon")
+    private String loaiHoaDon;
 
     @Column(name = "ngaygiaohang")
     private LocalDateTime ngayGiaoHang;

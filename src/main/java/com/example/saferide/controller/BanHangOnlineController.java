@@ -131,10 +131,10 @@ public class BanHangOnlineController {
         hoaDon.setIdTaiKhoan(taiKhoan);
         hoaDon.setNgayTao(LocalDateTime.now());
         hoaDon.setTongTien(tongTien);
-//        hoaDon.setLoaiHoaDon(Integer.parseInt("Hóa Đơn Online"));
+        hoaDon.setLoaiHoaDon("Hóa Đơn Online");
         String diaChi = soNha + ", Xã " + xa + ", Huyện " + huyen + ", " + thanhPho;
         hoaDon.setDiaChi(diaChi);
-        hoaDon.setTt("Chưa thanh toán");  // Đơn hàng chưa thanh toán
+        hoaDon.setTt("Chưa thanh toán");
         hoaDon.setNguoiTao("Phạm Anh Tuấn");
 
         // Lưu hóa đơn vào cơ sở dữ liệu để lấy ID
@@ -214,7 +214,7 @@ public class BanHangOnlineController {
         HoaDon hoaDon = hoaDonOpt.get();
 
         // Danh sách trạng thái hợp lệ
-        List<String> trangThaiHopLe = List.of("Đã gửi cho bên vận chuyển", "Đang giao", "Đã giao", "Hoàn thành");
+        List<String> trangThaiHopLe = List.of("Đã gửi cho bên vận chuyển", "Đang giao", "Đã giao", "Hoàn thành","Đã Hủy","Hoàn trả");
 
         // Kiểm tra xem trạng thái mới có hợp lệ không
         if (!trangThaiHopLe.contains(trangThaiMoi)) {
