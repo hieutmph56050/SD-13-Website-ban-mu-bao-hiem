@@ -15,7 +15,6 @@ import com.example.saferide.response.InvoiceResponse;
 import com.example.saferide.response.ProductInInvoiceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -42,14 +41,14 @@ public class BanHangController {
     private TaiKhoanRepository taiKhoanRepository;
 
     @PostMapping("/them-hoa-don")
-    public ResponseEntity<?> themHoaDon(HoaDon hoaDon, Model model, @RequestBody(required = false) String tenKhachHang, @RequestBody(required = false) String sdt) {
+    public ResponseEntity<?> themHoaDon(HoaDon hoaDon, @RequestBody(required = false) String tenKhachHang, @RequestBody(required = false) String sdt) {
         String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMdHms"));
         LocalDateTime fakedata = LocalDateTime.now();
         hoaDon.setMa("HD" + timeStamp);
         TaiKhoan taiKhoan = taiKhoanRepository.findById(1).orElse(null);
         hoaDon.setIdTaiKhoan(taiKhoan);
         hoaDon.setIdVoucher(null);
-        hoaDon.setLoaiHoaDon(1);
+        hoaDon.setLoaiHoaDon("Hóa đơn Tại Quầy");
         hoaDon.setNgayGiaoHang(fakedata);
         hoaDon.setNgayNhan(fakedata);
         hoaDon.setGiaGiam(null);

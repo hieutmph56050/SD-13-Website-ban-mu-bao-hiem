@@ -1,21 +1,34 @@
 package com.example.saferide.controller;
 
 import com.example.saferide.entity.*;
+import com.example.saferide.response.ProductResponse;
 import com.example.saferide.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
-@RequestMapping("/api/spchitiet")
+@RequestMapping("/spchitiet")
 public class SPChiTietController {
     @Autowired
     SPChiTietService service;
 
-    @GetMapping
-    public ResponseEntity<?> getAll(){
-        return ResponseEntity.ok(service.getList());
+    @GetMapping("/danhsach")
+    public ResponseEntity<?> getAll() {
+        ProductResponse<SPChiTiet> listSPChiTiet = new ProductResponse<>();
+        listSPChiTiet.data = service.getList();
+        return ResponseEntity.ok(listSPChiTiet);
+    }
+
+    @RequestMapping("/index")
+    public String showSPChiTietList(Model model) {
+        List<SPChiTiet> listSPChiTiet = service.getList();
+        model.addAttribute("list", listSPChiTiet);
+        return "spchitiet/index";
     }
 
     @PostMapping("/add")

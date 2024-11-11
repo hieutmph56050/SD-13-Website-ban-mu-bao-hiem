@@ -5,11 +5,15 @@ import com.example.saferide.response.ProductResponse;
 import com.example.saferide.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/sanpham")
 public class SanPhamController {
+
     @Autowired
     SanPhamService service;
 
@@ -18,6 +22,13 @@ public class SanPhamController {
         ProductResponse<SanPham> listSanPham = new ProductResponse<>();
         listSanPham.data = service.getList();
         return ResponseEntity.ok(listSanPham);
+    }
+
+    @RequestMapping("/index")
+    public String showProductList(Model model) {
+        List<SanPham> listSanPham = service.getList();
+        model.addAttribute("list", listSanPham);
+        return "sanpham/index";
     }
 
     @PostMapping("/add")

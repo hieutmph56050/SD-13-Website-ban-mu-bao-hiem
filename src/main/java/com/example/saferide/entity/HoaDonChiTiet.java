@@ -21,7 +21,7 @@ import java.util.Locale;
 public class HoaDonChiTiet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @JoinColumn(name = "id_hoadon", referencedColumnName = "id")
     @ManyToOne
@@ -36,6 +36,9 @@ public class HoaDonChiTiet {
 
     @Column(name = "tongtien", precision = 18, scale = 2)
     private BigDecimal tongTien = BigDecimal.ZERO;
+
+    @Column(name = "Gia", precision = 18, scale = 2)
+    private BigDecimal Gia = BigDecimal.ZERO;
 
     public String getFormattedTongTien() {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
