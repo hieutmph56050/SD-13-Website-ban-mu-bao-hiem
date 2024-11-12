@@ -4,10 +4,11 @@ import com.example.saferide.entity.*;
 import com.example.saferide.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
 
-@Controller
+
+@RestController
 @RequestMapping("/api/spchitiet")
 public class SPChiTietController {
     @Autowired
@@ -35,5 +36,19 @@ public class SPChiTietController {
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id){
         return ResponseEntity.ok(service.findById(id));
+    }
+
+
+    @GetMapping("/paged")
+    public ResponseEntity<?> getPaged(
+            @RequestParam int page,
+            @RequestParam int size) {
+        return ResponseEntity.ok(service.getAllPaged(page, size));
+    }
+    @GetMapping("/search")
+    public ResponseEntity<?> searchByKeywordAndQuantity(
+            @RequestParam String keyword,
+            @RequestParam int quantity) {
+        return ResponseEntity.ok(service.search(keyword, quantity));
     }
 }

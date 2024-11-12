@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Controller
 @RequestMapping("/api/loaimu")
@@ -15,8 +18,13 @@ public class LoaiMuController {
     LoaiMuService service;
 
     @GetMapping
-    public ResponseEntity<?> getAll(){
-        return ResponseEntity.ok(service.getList());
+    public ResponseEntity<?> getAll(
+            @RequestParam(required = false) String searchTerm,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<LoaiMu> result = service.getListWithPaginationAndSearch(searchTerm, pageable);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/add")

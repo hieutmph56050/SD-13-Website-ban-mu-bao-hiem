@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Controller
 @RequestMapping("/api/thuonghieu")
@@ -36,5 +38,13 @@ public class ThuongHieuController {
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id){
         return ResponseEntity.ok(service.findById(id));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<ThuongHieu>> search(
+            @RequestParam String keyword,
+            Pageable pageable) {
+        Page<ThuongHieu> result = service.search(keyword, pageable);
+        return ResponseEntity.ok(result);
     }
 }

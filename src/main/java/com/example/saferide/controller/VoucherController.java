@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/voucher")
@@ -36,4 +40,18 @@ public class VoucherController {
     public ResponseEntity<?> findById(@PathVariable Integer id){
         return ResponseEntity.ok(service.findById(id));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestParam(required = false) String keyword) {
+        List<Voucher> result = service.searchVoucher(keyword);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/paged")
+    public ResponseEntity<Page<Voucher>> getPagedVoucher(Pageable pageable) {
+        Page<Voucher> result = service.getListWithPagination(pageable);
+        return ResponseEntity.ok(result);
+    }
+
+
 }

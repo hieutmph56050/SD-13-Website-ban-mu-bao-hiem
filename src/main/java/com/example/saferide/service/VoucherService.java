@@ -3,6 +3,8 @@ package com.example.saferide.service;
 import com.example.saferide.entity.Voucher;
 import com.example.saferide.repository.VoucherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -48,4 +50,12 @@ public class VoucherService {
             return voucher1;
         }).orElse(null);
     }
+    public List<Voucher> searchVoucher(String keyword) {
+        return voucherRepository.searchVoucher(keyword);
+    }
+    public Page<Voucher> getListWithPagination(Pageable pageable) {
+        return voucherRepository.findAll(pageable);
+    }
+
+
 }

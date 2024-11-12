@@ -25,7 +25,7 @@ public class GioHangChiTiet {
     @ManyToOne
     private GioHang idGioHang;
 
-    @JoinColumn(name = "id_sanphamchitiet", referencedColumnName = "id")
+    @JoinColumn(name = "ID_SPCT", referencedColumnName = "id")
     @ManyToOne
     private SPChiTiet idSPCT;
 

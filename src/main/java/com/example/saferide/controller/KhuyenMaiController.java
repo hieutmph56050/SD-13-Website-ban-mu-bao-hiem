@@ -6,6 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/khuyenmai")
@@ -35,5 +41,19 @@ public class KhuyenMaiController {
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id){
         return ResponseEntity.ok(service.findById(id));
+    }
+    // Phương thức tìm kiếm theo tên hoặc mã khuyến mãi
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestParam(required = false) String keyword) {
+        List<KhuyenMai> result = service.search(keyword);
+        return ResponseEntity.ok(result);
+    }
+
+    // Phương thức phân trang
+    @GetMapping("/page")
+    public ResponseEntity<?> getPage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<KhuyenMai> result = service.getPage(pageable);
+        return ResponseEntity.ok(result);
     }
 }

@@ -4,6 +4,10 @@ import com.example.saferide.entity.LoaiMu;
 import com.example.saferide.repository.LoaiMuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,5 +48,26 @@ public class LoaiMuService {
             loaimuRepository.delete(loaiMu1);
             return loaiMu1;
         }).orElse(null);
+    }
+    // Phương thức để tạo Specification cho việc tìm kiếm
+    private Specification<LoaiMu> buildSearchSpecification(String searchTerm) {
+        return (root, query, criteriaBuilder) -> {
+            if (searchTerm == null || searchTerm.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.or(
+                    criteriaBuilder.like(root.get("ma"), "%" + searchTerm + "%"),
+                    criteriaBuilder.like(root.get("ten"), "%" + searchTerm + "%"),
+                    criteriaBuilder.like(root.get("moTa"), "%" + searchTerm + "%"),
+                    criteriaBuilder.like(root.get("nguoiTao"), "%" + searchTerm + "%"),
+                    criteriaBuilder.like(root.get("nguoiCapNhat"), "%" + searchTerm + "%"),
+                    criteriaBuilder.like(root.get("tt"), "%" + searchTerm + "%")
+            );
+        };
+    }
+
+    public Page<LoaiMu> getListWithPaginationAndSearch(String searchTerm, Pageable pageable) {
+        Specification<LoaiMu> spec = buildSearchSpecification(searchTerm);
+        return loaimuRepository.findAll(spec, pageable);
     }
 }

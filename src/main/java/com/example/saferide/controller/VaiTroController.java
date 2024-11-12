@@ -1,8 +1,11 @@
 package com.example.saferide.controller;
 
+import com.example.saferide.entity.ThuongHieu;
 import com.example.saferide.entity.VaiTro;
 import com.example.saferide.service.VaiTroService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -36,4 +39,12 @@ public class VaiTroController {
     public ResponseEntity<?> findById(@PathVariable Integer id){
         return ResponseEntity.ok(service.findById(id));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<VaiTro>> search(
+            @RequestParam String keyword, Pageable pageable) {
+        Page<VaiTro> result = service.search(keyword, pageable);
+        return ResponseEntity.ok(result);
+    }
+
 }

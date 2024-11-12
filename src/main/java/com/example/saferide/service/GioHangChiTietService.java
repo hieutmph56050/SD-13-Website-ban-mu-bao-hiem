@@ -4,7 +4,8 @@ import com.example.saferide.entity.GioHangChiTiet;
 import com.example.saferide.repository.GioHangChiTietRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -45,5 +46,13 @@ public class GioHangChiTietService {
             sanphamRepository.delete(sanPham1);
             return sanPham1;
         }).orElse(null);
+    }
+    // Thêm phương thức phân trang và tìm kiếm
+    public Page<GioHangChiTiet> searchByAllFields(String searchTerm, Pageable pageable) {
+        return sanphamRepository.searchByAllFields(searchTerm, pageable);
+    }
+
+    public Page<GioHangChiTiet> getAllWithPagination(Pageable pageable) {
+        return sanphamRepository.findAll(pageable);
     }
 }

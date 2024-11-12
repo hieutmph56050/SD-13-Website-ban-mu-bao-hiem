@@ -4,7 +4,8 @@ import com.example.saferide.entity.HoaDon;
 import com.example.saferide.repository.HoaDonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -53,4 +54,8 @@ public class HoaDonService{
 //            return hoaDon1;
 //        }).orElse(null);
 //    }
+
+    public Page<HoaDon> searchWithPaging(String ma, String ghiChu, String diaChi, String nguoiTao, Pageable pageable) {
+        return hoadonRepository.searchWithPaging(ma, ghiChu, diaChi, nguoiTao, pageable);
+    }
 }
