@@ -15,5 +15,4 @@ public interface TaiKhoanRepository extends JpaRepository<TaiKhoan, Integer> {
     @Query("SELECT tk FROM TaiKhoan tk WHERE tk.id = :id")
     Optional<TaiKhoan> findByIdTK(@Param("id") Integer id);
 
-
 }
