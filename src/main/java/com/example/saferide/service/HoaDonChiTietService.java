@@ -4,7 +4,10 @@ import com.example.saferide.entity.HoaDonChiTiet;
 import com.example.saferide.repository.HoaDonChiTietRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -46,5 +49,8 @@ public class HoaDonChiTietService {
             hoadonchitietRepository.delete(hoadonChiTiet1);
             return hoadonChiTiet1;
         }).orElse(null);
+    }
+    public Page<HoaDonChiTiet> search(String mahdct, BigDecimal tongTien, Integer sl, String ghiChu, String tt, Pageable pageable) {
+        return hoadonchitietRepository.search(mahdct, tongTien, sl, ghiChu, tt, pageable);
     }
 }

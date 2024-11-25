@@ -10,11 +10,11 @@ import java.util.List;
 
 @Service
 public class GioHangChiTietService {
-        @Autowired
-        private GioHangChiTietRepository gioHangChiTietRepository;
+    @Autowired
+    private GioHangChiTietRepository gioHangChiTietRepository;
 
-        public List<GioHangChiTiet> getGioHangChiTietByGioHang(GioHang gioHang) {
-            return gioHangChiTietRepository.findByIdGioHang(gioHang);
-        }
+    public List<GioHangChiTiet> getGioHangChiTietByGioHang(GioHang gioHang) {
+        return gioHangChiTietRepository.findByIdGioHang(gioHang);
+    }
 
 }

@@ -1,3 +1,4 @@
+
 package com.example.saferide.entity;
 
 import jakarta.persistence.*;

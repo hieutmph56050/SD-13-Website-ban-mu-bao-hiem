@@ -4,6 +4,10 @@ import com.example.saferide.entity.SPChiTiet;
 import com.example.saferide.repository.SPChiTietRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,5 +57,14 @@ public class SPChiTietService {
             spchitietRepository.delete(spChiTiet1);
             return spChiTiet1;
         }).orElse(null);
+    }
+
+    public Page<SPChiTiet> getAllPaged(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("ngayTao").descending());
+        return spchitietRepository.findAll(pageable);
+    }
+    public List<SPChiTiet> search(String keyword, int quantity) {
+        return spchitietRepository.findByMaContainingOrMoTaCTContainingOrXuatXuContainingAndSlGreaterThanEqual(
+                keyword, keyword, keyword, quantity);
     }
 }

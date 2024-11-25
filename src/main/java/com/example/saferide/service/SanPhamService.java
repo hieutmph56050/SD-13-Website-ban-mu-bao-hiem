@@ -3,6 +3,8 @@ package com.example.saferide.service;
 import com.example.saferide.entity.SanPham;
 import com.example.saferide.repository.SanPhamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -40,4 +42,12 @@ public class SanPhamService {
             return sanPham1;
         }).orElse(null);
     }
+    public Page<SanPham> search(String keyword, Pageable pageable) {
+        return sanphamRepository.search(keyword, pageable);
+    }
+    public Page<SanPham> getAllPaged(Pageable pageable) {
+        return sanphamRepository.findAll(pageable);
+    }
+
+
 }

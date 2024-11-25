@@ -4,6 +4,8 @@ import com.example.saferide.entity.ThuongHieu;
 import com.example.saferide.repository.ThuongHieuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,5 +43,8 @@ public class ThuongHieuService {
             thuonghieuRepository.delete(thuongHieu1);
             return thuongHieu1;
         }).orElse(null);
+    }
+    public Page<ThuongHieu> search(String keyword, Pageable pageable) {
+        return thuonghieuRepository.searchByKeyword(keyword, pageable);
     }
 }

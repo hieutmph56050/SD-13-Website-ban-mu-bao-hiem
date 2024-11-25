@@ -4,6 +4,8 @@ import com.example.saferide.entity.LoaiKinh;
 import com.example.saferide.repository.LoaiKinhRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,5 +47,8 @@ public class LoaiKinhService {
             loaikinhRepository.delete(loaiKinh1);
             return loaiKinh1;
         }).orElse(null);
+    }
+    public Page<LoaiKinh> search(String ma, String ten, String moTa, String nguoiTao, String nguoiCapNhat, String tt, Pageable pageable) {
+        return loaikinhRepository.search(ma, ten, moTa, nguoiTao, nguoiCapNhat, tt, pageable);
     }
 }
