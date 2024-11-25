@@ -55,5 +55,4 @@ public class TaiKhoanService {
     public Page<TaiKhoan> search(String keyword, Pageable pageable) {
         return taikhoanRepository.searchByKeyword(keyword, pageable);
     }
-
 }
