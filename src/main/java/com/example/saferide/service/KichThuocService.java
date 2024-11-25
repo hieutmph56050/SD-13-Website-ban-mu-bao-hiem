@@ -2,6 +2,8 @@ package com.example.saferide.service;
 
 import com.example.saferide.entity.KichThuoc;
 import com.example.saferide.repository.KichThuocRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,4 +43,14 @@ public class KichThuocService {
             return kichThuoc1;
         }).orElse(null);
     }
+    // Tìm kiếm theo ma, ten, moTa, nguoiTao, tt
+    public Page<KichThuoc> search(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return kichthuocRepository.findAll(pageable);  // Nếu không có từ khóa, trả về tất cả với phân trang
+        }
+        return kichthuocRepository.findByMaContainingOrTenContainingOrMoTaContainingOrNguoiTaoContainingOrTtContaining(
+                keyword, keyword, keyword, keyword, keyword, pageable);  // Tìm kiếm theo từ khóa
+    }
+
+
 }

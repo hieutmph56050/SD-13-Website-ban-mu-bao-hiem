@@ -9,6 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+
 
 import java.util.List;
 
@@ -49,5 +55,21 @@ public class ChatLieuVoController {
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id){
         return ResponseEntity.ok(service.findById(id));
+    }
+    // Phương thức tìm kiếm theo tất cả các trường
+    @GetMapping("/search")
+    public ResponseEntity<List<ChatLieuVo>> searchByAllFields(@RequestParam String searchTerm) {
+        List<ChatLieuVo> result = service.searchByAllFields(searchTerm);
+        return ResponseEntity.ok(result);
+    }
+
+    // Phương thức phân trang
+    @GetMapping("/phan-trang")
+    public ResponseEntity<Page<ChatLieuVo>> getAllWithPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ChatLieuVo> result = service.getAllWithPagination(pageable);
+        return ResponseEntity.ok(result);
     }
 }
