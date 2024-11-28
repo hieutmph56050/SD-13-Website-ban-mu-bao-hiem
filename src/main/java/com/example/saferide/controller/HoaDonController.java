@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/hoa-don")
+@RequestMapping("/api/admin/hoa-don")
 public class HoaDonController {
     @Autowired
     HoaDonRepository hdRepository;

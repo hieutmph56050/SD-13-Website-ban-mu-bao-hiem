@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/online")
+@RequestMapping("/api/admin")
 public class BanHangOnlineController {
 
     @Autowired
@@ -51,12 +52,14 @@ public class BanHangOnlineController {
     @Autowired
     private HoaDonChiTietRepository hoaDonChiTietRepository;
 
+    @PreAuthorize("hasRole('ROLE_Admin')")
     @DeleteMapping("/xoa/{id}")
     public ResponseEntity<?> xoaGioHang(@PathVariable Integer id) {
         gioHangRepository.deleteById(id);
         return ResponseEntity.ok("Xóa thành công");
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_Admin','ROLE_User')")
     @PostMapping("/them-san-pham")
     public ResponseEntity<?> themSanPham(@RequestParam Integer productId,
                                          @RequestParam Integer idTaiKhoan,
@@ -174,6 +177,7 @@ public class BanHangOnlineController {
         return ResponseEntity.ok("Đặt hàng thành công, Mã hóa đơn: " + maHD);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_Admin','ROLE_Staff')")
     @GetMapping("/in-hoa-don")
     public void inHoaDon(@RequestParam String maHoaDon, HttpServletResponse response) {
         // Tìm hóa đơn theo mã hóa đơn
