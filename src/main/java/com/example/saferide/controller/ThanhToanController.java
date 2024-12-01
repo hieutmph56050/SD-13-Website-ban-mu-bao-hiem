@@ -4,10 +4,13 @@ import com.example.saferide.entity.ThanhToan;
 import com.example.saferide.response.ProductResponse;
 import com.example.saferide.service.ThanhToanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -48,5 +51,12 @@ public class ThanhToanController {
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id){
         return ResponseEntity.ok(service.findById(id));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(
+            @RequestParam String keyword, Pageable pageable) {
+        Page<ThanhToan> result = service.search(keyword, pageable);
+        return ResponseEntity.ok(result);
     }
 }

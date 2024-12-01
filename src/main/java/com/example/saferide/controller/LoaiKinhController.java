@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -47,5 +49,17 @@ public class LoaiKinhController {
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id){
         return ResponseEntity.ok(service.findById(id));
+    }
+    @GetMapping("/search")
+    public ResponseEntity<Page<LoaiKinh>> search(
+            @RequestParam(required = false) String ma,
+            @RequestParam(required = false) String ten,
+            @RequestParam(required = false) String moTa,
+            @RequestParam(required = false) String nguoiTao,
+            @RequestParam(required = false) String nguoiCapNhat,
+            @RequestParam(required = false) String tt,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(service.search(ma, ten, moTa, nguoiTao, nguoiCapNhat, tt, pageable));
     }
 }

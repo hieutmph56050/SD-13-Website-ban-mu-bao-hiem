@@ -3,6 +3,8 @@ package com.example.saferide.service;
 import com.example.saferide.entity.ChatLieuVo;
 import com.example.saferide.repository.ChatLieuVoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -44,5 +46,14 @@ public class ChatLieuVoService {
             chatlieuvoRepository.delete(chatLieuVo1);
             return chatLieuVo1;
         }).orElse(null);
+    }
+    // Phương thức tìm kiếm theo tất cả các trường
+    public List<ChatLieuVo> searchByAllFields(String searchTerm) {
+        return chatlieuvoRepository.searchByAllFields(searchTerm);
+    }
+
+    // Phương thức phân trang
+    public Page<ChatLieuVo> getAllWithPagination(Pageable pageable) {
+        return chatlieuvoRepository.findAll(pageable);
     }
 }

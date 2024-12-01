@@ -4,7 +4,9 @@ import com.example.saferide.entity.KhuyenMai;
 import com.example.saferide.repository.KhuyenMaiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -48,5 +50,17 @@ public class KhuyenMaiService {
             khuyenmaiRepository.delete(khuyenMai1);
             return khuyenMai1;
         }).orElse(null);
+    }
+    // Tìm kiếm theo tên hoặc mã
+    public List<KhuyenMai> search(String keyword) {
+        if (keyword == null || keyword.isEmpty()) {
+            return khuyenmaiRepository.findAll();
+        }
+        return khuyenmaiRepository.findByMaContainingOrTenContaining(keyword, keyword);
+    }
+
+    // Phân trang
+    public Page<KhuyenMai> getPage(Pageable pageable) {
+        return khuyenmaiRepository.findAll(pageable);
     }
 }

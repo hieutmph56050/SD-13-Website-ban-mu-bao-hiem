@@ -9,6 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,5 +69,20 @@ public class HoaDonChiTietController {
         }
         listHoaDonChiTiet.data.add(0, service.findById(id));
         return ResponseEntity.ok(listHoaDonChiTiet);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(
+            @RequestParam(required = false) String mahdct,
+            @RequestParam(required = false) BigDecimal tongTien,
+            @RequestParam(required = false) Integer sl,
+            @RequestParam(required = false) String ghiChu,
+            @RequestParam(required = false) String tt,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<HoaDonChiTiet> result = service.search(mahdct, tongTien, sl, ghiChu, tt, pageable);
+        return ResponseEntity.ok(result);
     }
 }

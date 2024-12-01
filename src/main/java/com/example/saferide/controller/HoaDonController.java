@@ -3,11 +3,15 @@ package com.example.saferide.controller;
 import com.example.saferide.entity.HoaDon;
 import com.example.saferide.repository.HoaDonRepository;
 import com.example.saferide.response.InvoiceResponse;
+import com.example.saferide.service.HoaDonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Comparator;
 
@@ -16,6 +20,8 @@ import java.util.Comparator;
 public class HoaDonController {
     @Autowired
     HoaDonRepository hdRepository;
+    @Autowired
+    HoaDonService hoaDonService;
 
 
     @GetMapping("/danh-sach")
@@ -40,4 +46,14 @@ public class HoaDonController {
 //    public ResponseEntity<?> findById(@PathVariable Integer id){
 //        return ResponseEntity.ok(service.findById(id));
 //    }
+@GetMapping("/tim-kiem")
+public ResponseEntity<?> search(
+        @RequestParam(required = false) String ma,
+        @RequestParam(required = false) String ghiChu,
+        @RequestParam(required = false) String diaChi,
+        @RequestParam(required = false) String nguoiTao,
+        Pageable pageable
+) {
+    return ResponseEntity.ok(hoaDonService.searchWithPaging(ma, ghiChu, diaChi, nguoiTao, pageable));
+}
 }

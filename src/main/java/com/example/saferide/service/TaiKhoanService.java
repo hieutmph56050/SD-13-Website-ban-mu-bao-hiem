@@ -4,7 +4,8 @@ import com.example.saferide.entity.TaiKhoan;
 import com.example.saferide.repository.TaiKhoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -14,8 +15,8 @@ public class TaiKhoanService {
     @Autowired
     TaiKhoanRepository taikhoanRepository;
 
-    public List<TaiKhoan> getList() {
-        return taikhoanRepository.findAll();
+    public Page<TaiKhoan> getList(Pageable pageable) {
+        return taikhoanRepository.findAll(pageable);
     }
 
     public TaiKhoan findById(Integer id) {
@@ -50,5 +51,8 @@ public class TaiKhoanService {
             taikhoanRepository.delete(taiKhoan1);
             return taiKhoan1;
         }).orElse(null);
+    }
+    public Page<TaiKhoan> search(String keyword, Pageable pageable) {
+        return taikhoanRepository.searchByKeyword(keyword, pageable);
     }
 }
