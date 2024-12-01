@@ -35,7 +35,7 @@ public class HoaDon {
     private Voucher idVoucher;
 
     @Column(name = "loaihoadon")
-    private String loaiHoaDon;
+    private int loaiHoaDon;
 
     @Column(name = "ngaygiaohang")
     private LocalDateTime ngayGiaoHang;

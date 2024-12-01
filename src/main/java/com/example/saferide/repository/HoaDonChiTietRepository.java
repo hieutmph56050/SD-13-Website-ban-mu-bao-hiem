@@ -22,4 +22,9 @@ public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet, In
 
     @Query("SELECT hdc FROM HoaDonChiTiet hdc WHERE hdc.idHoaDon.id = :hoaDonId AND hdc.idSPCT.id = :sanPhamId")
     Optional<HoaDonChiTiet> findByHoaDonIdAndSanPhamId(@Param("hoaDonId") Integer hoaDonId, @Param("sanPhamId") Integer sanPhamId);
+
+        @Query("SELECT hdc FROM HoaDonChiTiet hdc WHERE hdc.idHoaDon.loaiHoaDon = :loaiHoaDon")
+        List<HoaDonChiTiet> findHDByLoaiHoaDon(@Param("loaiHoaDon") Integer loaiHoaDon);
+
+
 }
