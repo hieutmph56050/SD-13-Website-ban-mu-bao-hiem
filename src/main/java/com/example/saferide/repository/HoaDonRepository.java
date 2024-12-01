@@ -3,6 +3,8 @@ package com.example.saferide.repository;
 
 import com.example.saferide.entity.GioHang;
 import com.example.saferide.entity.HoaDon;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,4 +20,6 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Integer> {
 
     @Query("SELECT h FROM HoaDon h WHERE h.ma = :maHoaDon")
     Optional<HoaDon> findByMaHoaDon(String maHoaDon);
+
+    Page<HoaDon> searchWithPaging(String ma, String ghiChu, String diaChi, String nguoiTao, Pageable pageable);
 }
