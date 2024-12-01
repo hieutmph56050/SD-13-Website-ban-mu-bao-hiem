@@ -1,6 +1,7 @@
 package com.example.saferide.controller;
 
 import com.example.saferide.entity.*;
+import com.example.saferide.response.OneProductResponse;
 import com.example.saferide.response.ProductResponse;
 import com.example.saferide.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,8 @@ public class SPChiTietController {
     }
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id){
-        return ResponseEntity.ok(service.findById(id));
+        OneProductResponse<SPChiTiet> sp = new OneProductResponse<>();
+        sp.data= service.findById(id);
+        return ResponseEntity.ok(sp);
     }
 }

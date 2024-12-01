@@ -21,6 +21,9 @@ public class HoaDonChiTietService {
         return hoadonchitietRepository.findAll();
     }
 
+    public List<HoaDonChiTiet> getListByBillType(Integer loaihd){
+        return  hoadonchitietRepository.findHDByLoaiHoaDon(loaihd);
+    }
     public HoaDonChiTiet findById(Integer id) {
         return hoadonchitietRepository.findById(id).get();
     }

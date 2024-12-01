@@ -2,6 +2,7 @@ package com.example.saferide.controller;
 
 import com.example.saferide.entity.*;
 import com.example.saferide.repository.*;
+import com.example.saferide.request.DatHangRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,21 +44,13 @@ public class BanHangOnlineController {
         return ResponseEntity.ok("Xóa thành công");
     }
 
-    @GetMapping("/hien-thi")
-    public ResponseEntity<?> hienThiGioHang() {
-        return ResponseEntity.ok(gioHangChiTietRepository.findAll());
-    }
-
-    @PostMapping("/them-san-pham")
-    public ResponseEntity<?> themSanPham(@RequestParam Integer productId,
-                                         @RequestParam Integer idTaiKhoan,
-                                         @RequestParam int soLuong) {
+    @PostMapping("/gio-hang/them-san-pham")
+    public ResponseEntity<?> themSanPham(@RequestParam Integer productId, @RequestParam Integer idTaiKhoan, @RequestParam int soLuong) {
         // Find product by ID
         SPChiTiet spChiTiet = spChiTietRepository.findById(productId).orElse(null);
         if (spChiTiet == null) {
             return ResponseEntity.badRequest().body("Sản phẩm chi tiết không tồn tại");
         }
-
         // Find account by ID
         TaiKhoan taiKhoan = taiKhoanRepository.findById(idTaiKhoan).orElse(null);
         if (taiKhoan == null) {
@@ -70,15 +65,7 @@ public class BanHangOnlineController {
             gioHang.setTt(false);
             gioHangRepository.save(gioHang);
         }
-
-        Optional<GioHangChiTiet> existingGioHangChiTiet = gioHangChiTietRepository
-                .findByIdGioHangAndIdSPCT(gioHang, spChiTiet);
-
-
-        if (soLuong <= 0) {
-            return ResponseEntity.badRequest().body("Số lượng sản phẩm phải lớn hơn 0");
-        }
-
+        Optional<GioHangChiTiet> existingGioHangChiTiet = gioHangChiTietRepository.findByIdGioHangAndIdSPCT(gioHang, spChiTiet);
         if (existingGioHangChiTiet.isPresent()) {
             // Nếu sản phẩm đã có trong giỏ hàng, cập nhật số lượng
             GioHangChiTiet gioHangChiTiet = existingGioHangChiTiet.get();
@@ -99,75 +86,47 @@ public class BanHangOnlineController {
     }
 
     @PostMapping("/dat-hang")
-    public ResponseEntity<?> datHangOnline(@RequestParam Integer gioHangId,
-                                           @RequestParam Integer idTaiKhoan,
-                                           @RequestParam String soNha,
-                                           @RequestParam String xa,
-                                           @RequestParam String huyen,
-                                           @RequestParam String thanhPho) {
-        // Kiểm tra giỏ hàng tồn tại
-        Optional<GioHang> gioHangOpt = gioHangRepository.findById(gioHangId);
-        if (!gioHangOpt.isPresent()) {
-            return ResponseEntity.badRequest().body("Giỏ hàng không tồn tại");
+    public ResponseEntity<?> datHangOnline(@RequestBody DatHangRequest datHangRequest) throws Exception {
+        TaiKhoan taiKhoan = taiKhoanRepository.findById(datHangRequest.getIdTaiKhoan()).orElseThrow(() -> new Exception("Tài khoản không tồn tại"));
+
+        BigDecimal tongTien = BigDecimal.ZERO;
+        for (SPChiTiet sanPham : datHangRequest.getSanPhamList()) {
+            BigDecimal donGia = sanPham.getDonGia();
+            Integer soLuong = sanPham.getSl();
+            tongTien = tongTien.add(donGia.multiply(BigDecimal.valueOf(soLuong)));
         }
 
-        GioHang gioHang = gioHangOpt.get();
-
-        // Kiểm tra tài khoản tồn tại
-        Optional<TaiKhoan> taiKhoanOpt = taiKhoanRepository.findById(idTaiKhoan);
-        if (!taiKhoanOpt.isPresent()) {
-            return ResponseEntity.badRequest().body("Tài khoản không tồn tại");
-        }
-
-        TaiKhoan taiKhoan = taiKhoanOpt.get();
-
-        // Tính tổng tiền giỏ hàng
-        BigDecimal tongTien = gioHang.getGioHangChiTietList().stream()
-                .map(gioHangChiTiet -> gioHangChiTiet.getDonGia().multiply(BigDecimal.valueOf(gioHangChiTiet.getSl())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        // Tạo hóa đơn mới
+        String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMdHms"));
         HoaDon hoaDon = new HoaDon();
         hoaDon.setIdTaiKhoan(taiKhoan);
         hoaDon.setNgayTao(LocalDateTime.now());
         hoaDon.setTongTien(tongTien);
-        hoaDon.setLoaiHoaDon("Hóa Đơn Online");
-        String diaChi = soNha + ", Xã " + xa + ", Huyện " + huyen + ", " + thanhPho;
-        hoaDon.setDiaChi(diaChi);
-        hoaDon.setTt("Chưa thanh toán");
+        hoaDon.setLoaiHoaDon(2);
+        hoaDon.setDiaChi(datHangRequest.getDiachi());
+        hoaDon.setTt("Chờ xác nhận");
         hoaDon.setNguoiTao("Phạm Anh Tuấn");
-
-        // Lưu hóa đơn vào cơ sở dữ liệu để lấy ID
+        hoaDon.setMa("HD" + timeStamp);
         hoaDonRepository.save(hoaDon);
 
-        // Sau khi lưu, tạo mã hóa đơn từ ID
-        String maHD = "HD" + hoaDon.getId();
-        hoaDon.setMa(maHD);
-        hoaDonRepository.save(hoaDon);
-
-        // Tạo chi tiết hóa đơn
-        for (GioHangChiTiet gioHangChiTiet : gioHang.getGioHangChiTietList()) {
+        for (SPChiTiet sanPham : datHangRequest.getSanPhamList()) {
             HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
+            hoaDonChiTiet.setId(hoaDon.getId());
             hoaDonChiTiet.setIdHoaDon(hoaDon);
-            hoaDonChiTiet.setIdSPCT(gioHangChiTiet.getIdSPCT());
-            hoaDonChiTiet.setGia(gioHangChiTiet.getDonGia());
-            hoaDonChiTiet.setSl(gioHangChiTiet.getSl());
-            hoaDonChiTiet.setTt("Chưa thanh toán");
-            String maHDCT = "HDCT" + hoaDon.getId();
-            hoaDonChiTiet.setMahdct(maHDCT);
-            hoaDonChiTiet.setTongTien(gioHangChiTiet.getDonGia().multiply(BigDecimal.valueOf(gioHangChiTiet.getSl())));
-
+            hoaDonChiTiet.setIdSPCT(sanPham);
+            hoaDonChiTiet.setSl(sanPham.getSl());
+            hoaDonChiTiet.setTt("Chờ xác nhận");
+            hoaDonChiTiet.setMahdct("HDCT" + timeStamp);
+            hoaDonChiTiet.setTongTien(sanPham.getDonGia().multiply(BigDecimal.valueOf(sanPham.getSl())));
             hoaDonChiTietRepository.save(hoaDonChiTiet);
         }
 
-        return ResponseEntity.ok("Đặt hàng thành công, Mã hóa đơn: " + maHD);
+        return ResponseEntity.ok(Collections.singletonMap("data", "Thanh cong"));
     }
 
     @PostMapping("/thanh-toan")
     public ResponseEntity<?> thanhToanOnline(@RequestParam Integer hoaDonId) {
         // Kiểm tra hóa đơn tồn tại
-        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hóa đơn không tồn tại"));
+        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hóa đơn không tồn tại"));
 
         // Cập nhật trạng thái của hóa đơn
         hoaDon.setTt("Đã thanh toán");
@@ -203,8 +162,7 @@ public class BanHangOnlineController {
     }
 
     @PostMapping("/trang-thai")
-    public ResponseEntity<?> capNhatTrangThaiHoaDon(@RequestParam Integer hoaDonId,
-                                                    @RequestParam String trangThaiMoi) {
+    public ResponseEntity<?> capNhatTrangThaiHoaDon(@RequestParam Integer hoaDonId, @RequestParam String trangThaiMoi) {
         // Kiểm tra hóa đơn tồn tại
         Optional<HoaDon> hoaDonOpt = hoaDonRepository.findById(hoaDonId);
         if (!hoaDonOpt.isPresent()) {
@@ -212,24 +170,16 @@ public class BanHangOnlineController {
         }
 
         HoaDon hoaDon = hoaDonOpt.get();
-
-        // Danh sách trạng thái hợp lệ
-        List<String> trangThaiHopLe = List.of("Đã gửi cho bên vận chuyển", "Đang giao", "Đã giao", "Hoàn thành","Đã Hủy","Hoàn trả");
-
-        // Kiểm tra xem trạng thái mới có hợp lệ không
+        List<String> trangThaiHopLe = List.of("Chưa xác nhận", "Đã xác nhận", "Đang giao hàng", "Hoàn thành", "Đã Hủy", "Hoàn trả");
         if (!trangThaiHopLe.contains(trangThaiMoi)) {
             return ResponseEntity.badRequest().body("Trạng thái không hợp lệ");
         }
-
-        // Cập nhật trạng thái hóa đơn
         hoaDon.setTt(trangThaiMoi);
         hoaDon.setNgayGiaoHang(LocalDateTime.now());
-
         if (trangThaiMoi.equals("Hoàn thành")) {
             hoaDon.setNgayNhan(LocalDateTime.now());
         }
         hoaDonRepository.save(hoaDon);
-
         return ResponseEntity.ok("Cập nhật trạng thái hóa đơn thành công: " + hoaDon.getMa());
     }
 
