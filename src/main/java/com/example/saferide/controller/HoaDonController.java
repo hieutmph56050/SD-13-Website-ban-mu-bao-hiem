@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Comparator;
 
 @RestController
-@RequestMapping("/hoa-don")
+@RequestMapping("/api/admin/hoa-don")
 public class HoaDonController {
     @Autowired
     HoaDonRepository hdRepository;

@@ -2,7 +2,9 @@ package com.example.saferide.service;
 
 import com.example.saferide.entity.TaiKhoan;
 import com.example.saferide.repository.TaiKhoanRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -10,9 +12,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TaiKhoanService {
+
     @Autowired
     TaiKhoanRepository taikhoanRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    JwtService jwtService;
 
     public List<TaiKhoan> getList() {
         return taikhoanRepository.findAll();
@@ -50,5 +60,26 @@ public class TaiKhoanService {
             taikhoanRepository.delete(taiKhoan1);
             return taiKhoan1;
         }).orElse(null);
+    }
+
+    public TaiKhoan dangKi(TaiKhoan taiKhoan){
+        Optional<TaiKhoan> taiKhoanOptional = taikhoanRepository.findByTenDangNhap(taiKhoan.getTenDangNhap());
+        if(taiKhoanOptional.isPresent()){
+            throw new RuntimeException("Ten tai khoan da ton tai");
+        }
+        taiKhoan.setMatKhau(passwordEncoder.encode(taiKhoan.getMatKhau()));
+       return taikhoanRepository.save(taiKhoan);
+    }
+
+    public String login(TaiKhoan taiKhoan ){
+        TaiKhoan taiKhoan1 = taikhoanRepository.findByTenDangNhap(taiKhoan.getTenDangNhap())
+                .orElseThrow(() -> new RuntimeException("Tai khoan khong ton tai"));
+
+        if(!passwordEncoder.matches(taiKhoan.getMatKhau(),taiKhoan1.getMatKhau())){
+
+            throw new RuntimeException("Mat khau khong ton tai");
+        }
+        return jwtService.generateToken(taiKhoan1);
+
     }
 }

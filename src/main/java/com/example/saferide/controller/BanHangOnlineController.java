@@ -2,19 +2,36 @@ package com.example.saferide.controller;
 
 import com.example.saferide.entity.*;
 import com.example.saferide.repository.*;
+import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.TextAlignment;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/online")
+@RequestMapping("/api/admin")
 public class BanHangOnlineController {
 
     @Autowired
@@ -35,17 +52,14 @@ public class BanHangOnlineController {
     @Autowired
     private HoaDonChiTietRepository hoaDonChiTietRepository;
 
+    @PreAuthorize("hasRole('ROLE_Admin')")
     @DeleteMapping("/xoa/{id}")
     public ResponseEntity<?> xoaGioHang(@PathVariable Integer id) {
         gioHangRepository.deleteById(id);
         return ResponseEntity.ok("Xóa thành công");
     }
 
-    @GetMapping("/hien-thi")
-    public ResponseEntity<?> hienThiGioHang() {
-        return ResponseEntity.ok(gioHangChiTietRepository.findAll());
-    }
-
+    @PreAuthorize("hasAnyRole('ROLE_Admin','ROLE_User')")
     @PostMapping("/them-san-pham")
     public ResponseEntity<?> themSanPham(@RequestParam Integer productId,
                                          @RequestParam Integer idTaiKhoan,
@@ -163,74 +177,142 @@ public class BanHangOnlineController {
         return ResponseEntity.ok("Đặt hàng thành công, Mã hóa đơn: " + maHD);
     }
 
-    @PostMapping("/thanh-toan")
-    public ResponseEntity<?> thanhToanOnline(@RequestParam Integer hoaDonId) {
-        // Kiểm tra hóa đơn tồn tại
-        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hóa đơn không tồn tại"));
+    @PreAuthorize("hasAnyRole('ROLE_Admin','ROLE_Staff')")
+    @GetMapping("/in-hoa-don")
+    public void inHoaDon(@RequestParam String maHoaDon, HttpServletResponse response) {
+        // Tìm hóa đơn theo mã hóa đơn
+        Optional<HoaDon> hoaDonOptional = hoaDonRepository.findByMa(maHoaDon);
 
-        // Cập nhật trạng thái của hóa đơn
-        hoaDon.setTt("Đã thanh toán");
-        hoaDonRepository.save(hoaDon);
-
-        Integer idTaiKhoan = hoaDon.getIdTaiKhoan().getId();
-        Optional<GioHang> gioHangOptional = gioHangRepository.findByIdTaiKhoan(idTaiKhoan);  // Lấy giỏ hàng từ tài khoản
-
-        System.out.println("ID TAI KHOAN: " + idTaiKhoan);
-        System.out.println("Giỏ hàng: " + gioHangOptional);
-
-        if (gioHangOptional.isPresent()) {
-            // Xử lý giỏ hàng nếu có
-            GioHang gioHang = gioHangOptional.get();
-
-            // Lấy tất cả chi tiết giỏ hàng
-            List<GioHangChiTiet> gioHangChiTietList = gioHangChiTietRepository.findByIdGioHang(gioHang);  // Fetch details using GioHang object
-            gioHangChiTietRepository.deleteAll(gioHangChiTietList);  // Xóa chi tiết giỏ hàng
-
-            // Xóa giỏ hàng
-            gioHangRepository.delete(gioHang);  // Xóa giỏ hàng
-
+        if (!hoaDonOptional.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hóa đơn không tồn tại");
         }
 
-        // Cập nhật trạng thái của từng chi tiết hóa đơn
-        List<HoaDonChiTiet> listHoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonId(hoaDonId);
-        for (HoaDonChiTiet hoaDonChiTiet : listHoaDonChiTiet) {
-            hoaDonChiTiet.setTt("Đã thanh toán");
-        }
-        hoaDonChiTietRepository.saveAll(listHoaDonChiTiet);  // Cập nhật chi tiết hóa đơn
+        HoaDon hoaDon = hoaDonOptional.get();
+        List<HoaDonChiTiet> chiTietList = hoaDonChiTietRepository.findByHoaDonId(hoaDon.getId());
 
-        return ResponseEntity.ok("Thanh toán thành công " + hoaDon.getMa());
+        try {
+            // Thiết lập file PDF trả về
+            response.setContentType("application/pdf");
+            String headerKey = "Content-Disposition";
+            String headerValue = "inline; filename=HoaDon_" + hoaDon.getMa() + ".pdf";
+            response.setHeader(headerKey, headerValue);
+
+            // Tạo PDF
+            PdfWriter writer = new PdfWriter(response.getOutputStream());
+            PdfDocument pdfDoc = new PdfDocument(writer);
+            Document document = new Document(pdfDoc);
+
+            // Đọc font từ resources
+            try (InputStream fontStream = getClass().getClassLoader().getResourceAsStream("fonts/times.ttf")) {
+                if (fontStream == null) {
+                    throw new RuntimeException("Không tìm thấy file font trong classpath: /fonts/times.ttf");
+                }
+
+                // Tạo font từ InputStream với PdfFontFactory.createFont
+                byte[] fontBytes = fontStream.readAllBytes();
+                PdfFont font = PdfFontFactory.createFont(fontBytes, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+                document.setFont(font);
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Lỗi khi đọc file font: " + e.getMessage(), e);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Lỗi khi tạo font từ file nội bộ: " + e.getMessage(), e);
+            }
+
+            //Thêm Logo vào Hóa đơn
+            String logoPath = "static/images/logo.png"; // Đảm bảo đường dẫn đúng
+            try {
+                // Lấy InputStream từ tài nguyên
+                InputStream logoStream = getClass().getClassLoader().getResourceAsStream(logoPath);
+
+                if (logoStream == null) {
+                    throw new RuntimeException("Không thể tìm thấy hình ảnh tại đường dẫn: " + logoPath);
+                }
+
+                // Tạo đối tượng Image từ InputStream
+                Image logo = new Image(ImageDataFactory.create(logoStream.readAllBytes()));
+                logo.setWidth(100f);  // Đặt kích thước cho hình ảnh
+                logo.setHeight(100f);
+                document.add(logo); // Thêm hình ảnh vào tài liệu PDF
+
+                // Đóng InputStream sau khi sử dụng
+                logoStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Lỗi khi đọc InputStream: " + e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Lỗi khi thêm hình ảnh vào PDF: " + e.getMessage());
+            }
+
+            // Tiêu đề hóa đơn
+            document.add(new Paragraph("HÓA ĐƠN CỬA HÀNG SAFE-RIDE")
+                    .setBold()
+                    .setFontSize(18)
+                    .setTextAlignment(TextAlignment.CENTER));
+
+            // Thông tin hóa đơn
+            document.add(new Paragraph("Mã hóa đơn: " + hoaDon.getMa()));
+            document.add(new Paragraph("Ngày tạo: " + hoaDon.getNgayTao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));
+            document.add(new Paragraph("Địa chỉ Shop (Address):  Số 68, SafeRide, Trịnh Văn Bô, Nam Từ Liêm, Hà Nội"));
+            document.add(new Paragraph("Điện thoại (Tel) : 123456789"));
+            document.add(new Paragraph("Email : saferide@gmail.com"));
+
+            // Thông tin khách hàng
+            String tenKhachHang = (hoaDon.getIdTaiKhoan() != null && hoaDon.getIdTaiKhoan().getTen() != null)
+                    ? hoaDon.getIdTaiKhoan().getTen()
+                    : "Không xác định";
+            document.add(new Paragraph("Khách hàng: " + tenKhachHang));
+            document.add(new Paragraph("Địa chỉ giao hàng: " + hoaDon.getDiaChi()));
+            document.add(new Paragraph("\n"));
+
+            // Thêm bảng chi tiết hóa đơn
+            float[] columnWidths = {2, 1, 1, 1}; // Tỉ lệ độ rộng các cột
+            Table table = new Table(columnWidths);
+
+            // Thêm tiêu đề cột
+            table.addHeaderCell(new Cell().add(new Paragraph("Tên sản phẩm").setBold()));
+            table.addHeaderCell(new Cell().add(new Paragraph("Số lượng").setBold()));
+            table.addHeaderCell(new Cell().add(new Paragraph("Đơn giá").setBold()));
+            table.addHeaderCell(new Cell().add(new Paragraph("Thành tiền").setBold()));
+
+            // Chi tiết hóa đơn
+            BigDecimal tongTien = BigDecimal.ZERO;
+            for (HoaDonChiTiet chiTiet : chiTietList) {
+                String tenSanPham = (chiTiet.getIdSPCT() != null && chiTiet.getIdSPCT().getMa() != null)
+                        ? chiTiet.getIdSPCT().getIdSanPham().getTen()
+                        : "Không xác định";
+
+                BigDecimal giaSanPham = (chiTiet.getGia() != null) ? chiTiet.getGia() : BigDecimal.ZERO;
+                String soLuong = String.valueOf(chiTiet.getSl());
+                BigDecimal thanhTien = giaSanPham.multiply(BigDecimal.valueOf(chiTiet.getSl()));
+
+                // Cộng dồn vào tổng tiền
+                tongTien = tongTien.add(thanhTien);
+
+                // Thêm chi tiết sản phẩm vào bảng
+                table.addCell(new Cell().add(new Paragraph(tenSanPham)));
+                table.addCell(new Cell().add(new Paragraph(soLuong)));
+                table.addCell(new Cell().add(new Paragraph(giaSanPham.toString() + " VND")));
+                table.addCell(new Cell().add(new Paragraph(thanhTien.toString() + " VND")));
+            }
+
+            // Thêm bảng vào tài liệu
+            document.add(table);
+
+            // Tổng tiền
+            document.add(new Paragraph("\n"));
+            document.add(new Paragraph("TỔNG TIỀN: " + tongTien.toString() + " VND")
+                    .setBold()
+                    .setFontSize(14));
+
+            // Đóng tài liệu
+            document.close();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi khi tạo file PDF: " + e.getMessage());
+        }
     }
 
-    @PostMapping("/trang-thai")
-    public ResponseEntity<?> capNhatTrangThaiHoaDon(@RequestParam Integer hoaDonId,
-                                                    @RequestParam String trangThaiMoi) {
-        // Kiểm tra hóa đơn tồn tại
-        Optional<HoaDon> hoaDonOpt = hoaDonRepository.findById(hoaDonId);
-        if (!hoaDonOpt.isPresent()) {
-            return ResponseEntity.badRequest().body("Hóa đơn không tồn tại");
-        }
-
-        HoaDon hoaDon = hoaDonOpt.get();
-
-        // Danh sách trạng thái hợp lệ
-        List<String> trangThaiHopLe = List.of("Đã gửi cho bên vận chuyển", "Đang giao", "Đã giao", "Hoàn thành","Đã Hủy","Hoàn trả");
-
-        // Kiểm tra xem trạng thái mới có hợp lệ không
-        if (!trangThaiHopLe.contains(trangThaiMoi)) {
-            return ResponseEntity.badRequest().body("Trạng thái không hợp lệ");
-        }
-
-        // Cập nhật trạng thái hóa đơn
-        hoaDon.setTt(trangThaiMoi);
-        hoaDon.setNgayGiaoHang(LocalDateTime.now());
-
-        if (trangThaiMoi.equals("Hoàn thành")) {
-            hoaDon.setNgayNhan(LocalDateTime.now());
-        }
-        hoaDonRepository.save(hoaDon);
-
-        return ResponseEntity.ok("Cập nhật trạng thái hóa đơn thành công: " + hoaDon.getMa());
-    }
 
 }
