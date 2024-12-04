@@ -4,6 +4,9 @@ import com.example.saferide.entity.ChatLieuDem;
 import com.example.saferide.repository.ChatLieuDemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,5 +47,13 @@ public class ChatLieuDemService {
             chatlieudemRepository.delete(chatLieuDem1);
             return chatLieuDem1;
         }).orElse(null);
+    }
+    // Phương thức phân trang
+    public Page<ChatLieuDem> getAllWithPagination(Pageable pageable) {
+        return chatlieudemRepository.findAll(pageable);
+    }
+    // Phương thức tìm kiếm theo tất cả các trường
+    public List<ChatLieuDem> searchByAllFields(String searchTerm) {
+        return chatlieudemRepository.searchByAllFields(searchTerm);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.saferide.controller;
 
+import com.example.saferide.entity.KhuyenMai;
 import com.example.saferide.entity.KichThuoc;
 import com.example.saferide.response.ProductResponse;
 import com.example.saferide.service.KichThuocService;
@@ -8,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -49,4 +53,14 @@ public class KichThuocController {
     public ResponseEntity<?> findById(@PathVariable Integer id){
         return ResponseEntity.ok(service.findById(id));
     }
+    // Tìm kiếm với phân trang
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestParam(required = false) String keyword,
+                                    @RequestParam(defaultValue = "0") int page,
+                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<KichThuoc> result = service.search(keyword, pageable);
+        return ResponseEntity.ok(result);
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.example.saferide.controller;
 
 import com.example.saferide.entity.HoaDonChiTiet;
+import com.example.saferide.response.InvoiceDetailResponse;
 import com.example.saferide.response.ProductResponse;
 import com.example.saferide.service.HoaDonChiTietService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/hoadonchitiet")
@@ -21,6 +30,13 @@ public class HoaDonChiTietController {
     public ResponseEntity<?> getAll() {
         ProductResponse<HoaDonChiTiet> listHoaDonChiTiet = new ProductResponse<>();
         listHoaDonChiTiet.data = service.getList();
+        return ResponseEntity.ok(listHoaDonChiTiet);
+    }
+
+    @GetMapping("/danh-sach/{billType}")
+    public ResponseEntity<?> getOnlineBill(@PathVariable Integer billType) {
+        ProductResponse<HoaDonChiTiet> listHoaDonChiTiet = new ProductResponse<>();
+        listHoaDonChiTiet.data = service.getListByBillType(billType);
         return ResponseEntity.ok(listHoaDonChiTiet);
     }
 
@@ -47,6 +63,26 @@ public class HoaDonChiTietController {
     }
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id){
-        return ResponseEntity.ok(service.findById(id));
+        InvoiceDetailResponse<HoaDonChiTiet> listHoaDonChiTiet = new InvoiceDetailResponse<>();
+        if (listHoaDonChiTiet.data == null) {
+            listHoaDonChiTiet.data = new ArrayList<>();
+        }
+        listHoaDonChiTiet.data.add(0, service.findById(id));
+        return ResponseEntity.ok(listHoaDonChiTiet);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(
+            @RequestParam(required = false) String mahdct,
+            @RequestParam(required = false) BigDecimal tongTien,
+            @RequestParam(required = false) Integer sl,
+            @RequestParam(required = false) String ghiChu,
+            @RequestParam(required = false) String tt,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<HoaDonChiTiet> result = service.search(mahdct, tongTien, sl, ghiChu, tt, pageable);
+        return ResponseEntity.ok(result);
     }
 }

@@ -12,6 +12,7 @@ import com.example.saferide.repository.TaiKhoanRepository;
 import com.example.saferide.request.ThanhToanRequest;
 import com.example.saferide.request.ThemSanPhamRequest;
 import com.example.saferide.response.InvoiceResponse;
+import com.example.saferide.response.ProductInInvoiceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +48,7 @@ public class BanHangController {
         TaiKhoan taiKhoan = taiKhoanRepository.findById(1).orElse(null);
         hoaDon.setIdTaiKhoan(taiKhoan);
         hoaDon.setIdVoucher(null);
-        hoaDon.setLoaiHoaDon("Hóa đơn Tại Quầy");
+        hoaDon.setLoaiHoaDon(1);
         hoaDon.setNgayGiaoHang(fakedata);
         hoaDon.setNgayNhan(fakedata);
         hoaDon.setGiaGiam(null);
@@ -71,6 +72,14 @@ public class BanHangController {
             response.data = new ArrayList<>();
         }
         response.data.add(0, hoaDon);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/hoa-don/{maHoaDon}/sanpham")
+    public ResponseEntity<?> productInInvoice(@PathVariable String maHoaDon) {
+        HoaDon hoaDon = hoaDonRepository.findByMaHoaDon(maHoaDon).orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
+        ProductInInvoiceResponse<HoaDonChiTiet> response = new ProductInInvoiceResponse<>();
+        response.data = hoaDonChiTietRepository.findByHoaDonId(hoaDon.getId());
         return ResponseEntity.ok(response);
     }
 

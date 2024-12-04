@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -49,5 +51,13 @@ public class ThuongHieuController {
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id){
         return ResponseEntity.ok(service.findById(id));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<ThuongHieu>> search(
+            @RequestParam String keyword,
+            Pageable pageable) {
+        Page<ThuongHieu> result = service.search(keyword, pageable);
+        return ResponseEntity.ok(result);
     }
 }

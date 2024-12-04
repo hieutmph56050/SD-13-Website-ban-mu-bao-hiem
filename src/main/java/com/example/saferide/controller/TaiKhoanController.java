@@ -1,3 +1,4 @@
+
 package com.example.saferide.controller;
 
 import com.example.saferide.dto.DoiMatKhauDTO;
@@ -8,10 +9,9 @@ import com.example.saferide.service.TaiKhoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Controller
 @RequestMapping("/tai-khoan")
@@ -28,13 +28,6 @@ public class TaiKhoanController {
         ProductResponse<TaiKhoan> listTaiKhoan = new ProductResponse<>();
         listTaiKhoan.data = service.getList();
         return ResponseEntity.ok(listTaiKhoan);
-    }
-
-    @RequestMapping("/index")
-    public String showTaiKhoanList(Model model) {
-        List<TaiKhoan> listTaiKhoan = service.getList();
-        model.addAttribute("list", listTaiKhoan);
-        return "taikhoan/index";
     }
 
     @PostMapping("/add")
@@ -82,5 +75,12 @@ public class TaiKhoanController {
 //            return ResponseEntity.badRequest().body(e.getMessage());
 //        }
 //    }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<TaiKhoan>> search(@RequestParam String keyword, Pageable pageable) {
+        Page<TaiKhoan> result = service.search(keyword, pageable);
+        return ResponseEntity.ok(result);
+    }
 
 }

@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -48,5 +50,16 @@ public class MauSacController {
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id){
         return ResponseEntity.ok(service.findById(id));
+    }
+    // Thêm endpoint tìm kiếm với phân trang
+    @GetMapping("/search")
+    public ResponseEntity<?> search(
+            @RequestParam(value = "ma", required = false) String ma,
+            @RequestParam(value = "ten", required = false) String ten,
+            @RequestParam(value = "moTa", required = false) String moTa,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<MauSac> result = service.search(ma, ten, moTa, page, size);
+        return ResponseEntity.ok(result);
     }
 }
