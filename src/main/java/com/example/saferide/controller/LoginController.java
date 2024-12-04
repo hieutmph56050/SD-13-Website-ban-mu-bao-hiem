@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -25,24 +22,23 @@ public class LoginController {
     @Autowired
     TaiKhoanService taiKhoanService;
 
-    @PostMapping("/login")
+    @GetMapping("/login")
     public ResponseEntity<?> login(@RequestBody TaiKhoan taiKhoan) {
-        // Lấy thông tin người dùng từ cơ sở dữ liệu theo tên đăng nhập
         try {
             return ResponseEntity.ok().body(Token.builder().token(taiKhoanService.login(taiKhoan)).build());
         } catch (RuntimeException e) {
-         return    ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }catch (Exception e){
-          return   ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
         }
     }
 
     @PostMapping("/dang-ki")
-    public ResponseEntity<?> dangKi(@RequestBody TaiKhoan taiKhoan ){
+    public ResponseEntity<?> dangKi(@RequestBody TaiKhoan taiKhoan) {
         try {
             taiKhoanService.dangKi(taiKhoan);
             return ResponseEntity.ok("Dang ki thanh cong");
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

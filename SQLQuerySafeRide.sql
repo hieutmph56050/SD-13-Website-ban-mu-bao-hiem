@@ -506,3 +506,5 @@ VALUES
 use SafeRide
 ALTER TABLE HoaDon
 ALTER COLUMN LoaiHoaDon nvarchar(100)
+
+ALTER TABLE HoaDon ADD PhiVanChuyen DECIMAL(10, 2)
