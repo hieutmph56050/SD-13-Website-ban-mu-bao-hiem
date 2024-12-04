@@ -46,14 +46,14 @@ public class HoaDonController {
 //    public ResponseEntity<?> findById(@PathVariable Integer id){
 //        return ResponseEntity.ok(service.findById(id));
 //    }
-@GetMapping("/tim-kiem")
-public ResponseEntity<?> search(
-        @RequestParam(required = false) String ma,
-        @RequestParam(required = false) String ghiChu,
-        @RequestParam(required = false) String diaChi,
-        @RequestParam(required = false) String nguoiTao,
-        Pageable pageable
-) {
-    return ResponseEntity.ok(hoaDonService.searchWithPaging(ma, ghiChu, diaChi, nguoiTao, pageable));
-}
+//@GetMapping("/tim-kiem")
+//public ResponseEntity<?> search(
+//        @RequestParam(required = false) String ma,
+//        @RequestParam(required = false) String ghiChu,
+//        @RequestParam(required = false) String diaChi,
+//        @RequestParam(required = false) String nguoiTao,
+//        Pageable pageable
+//) {
+//    return ResponseEntity.ok(hoaDonService.searchWithPaging(ma, ghiChu, diaChi, nguoiTao, pageable));
+//}
 }

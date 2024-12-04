@@ -21,5 +21,5 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Integer> {
     @Query("SELECT h FROM HoaDon h WHERE h.ma = :maHoaDon")
     Optional<HoaDon> findByMaHoaDon(String maHoaDon);
 
-    Page<HoaDon> searchWithPaging(String ma, String ghiChu, String diaChi, String nguoiTao, Pageable pageable);
+//    Page<HoaDon> searchWithPaging(String ma, String ghiChu, String diaChi, String nguoiTao, Pageable pageable);
 }
