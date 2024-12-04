@@ -2,21 +2,30 @@ package com.example.saferide.service;
 
 import com.example.saferide.entity.TaiKhoan;
 import com.example.saferide.repository.TaiKhoanRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TaiKhoanService {
+
     @Autowired
     TaiKhoanRepository taikhoanRepository;
 
-    public Page<TaiKhoan> getList(Pageable pageable) {
-        return taikhoanRepository.findAll(pageable);
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    JwtService jwtService;
+
+    public List<TaiKhoan> getList() {
+        return taikhoanRepository.findAll();
     }
 
     public TaiKhoan findById(Integer id) {
@@ -45,6 +54,7 @@ public class TaiKhoanService {
             return taikhoanRepository.save(taiKhoan1);
         }).orElse(null);
     }
+
     public TaiKhoan delete(Integer id) {
         Optional<TaiKhoan> optional = taikhoanRepository.findById(id);
         return optional.map(taiKhoan1 -> {
@@ -52,7 +62,21 @@ public class TaiKhoanService {
             return taiKhoan1;
         }).orElse(null);
     }
-    public Page<TaiKhoan> search(String keyword, Pageable pageable) {
-        return taikhoanRepository.searchByKeyword(keyword, pageable);
+
+    public TaiKhoan dangKi(TaiKhoan taiKhoan){
+        Optional<TaiKhoan> taiKhoanOptional = taikhoanRepository.findByTenDangNhap(taiKhoan.getTenDangNhap());
+        if(taiKhoanOptional.isPresent()){
+            throw new RuntimeException("Ten tai khoan da ton tai");
+        }
+        taiKhoan.setMatKhau(passwordEncoder.encode(taiKhoan.getMatKhau()));
+        return taikhoanRepository.save(taiKhoan);
+    }
+
+    public String login(TaiKhoan taiKhoan) {
+        TaiKhoan taiKhoan1 = taikhoanRepository.findByTenDangNhap(taiKhoan.getTenDangNhap()).orElseThrow(() -> new RuntimeException("Tai khoan khong ton tai"));
+        if (!passwordEncoder.matches(taiKhoan.getMatKhau(), taiKhoan1.getMatKhau())) {
+            throw new RuntimeException("Mat khau khong ton tai");
+        }
+        return jwtService.generateToken(taiKhoan1);
     }
 }
