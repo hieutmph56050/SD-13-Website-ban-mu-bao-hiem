@@ -250,7 +250,8 @@ public class BanHangOnlineController {
                         ? chiTiet.getIdSPCT().getIdSanPham().getTen()
                         : "Không xác định";
 
-                BigDecimal giaSanPham = (chiTiet.getGia() != null) ? chiTiet.getGia() : BigDecimal.ZERO;
+                assert chiTiet.getIdSPCT() != null;
+                BigDecimal giaSanPham = chiTiet.getIdSPCT().getDonGia();
                 String soLuong = String.valueOf(chiTiet.getSl());
                 BigDecimal thanhTien = giaSanPham.multiply(BigDecimal.valueOf(chiTiet.getSl()));
 

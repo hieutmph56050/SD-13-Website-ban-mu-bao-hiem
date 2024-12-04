@@ -76,11 +76,10 @@ public class TaiKhoanController {
 //        }
 //    }
 
-
-    @GetMapping("/search")
-    public ResponseEntity<Page<TaiKhoan>> search(@RequestParam String keyword, Pageable pageable) {
-        Page<TaiKhoan> result = service.search(keyword, pageable);
-        return ResponseEntity.ok(result);
-    }
+//    @GetMapping("/search")
+//    public ResponseEntity<Page<TaiKhoan>> search(@RequestParam String keyword, Pageable pageable) {
+//        Page<TaiKhoan> result = service.search(keyword, pageable);
+//        return ResponseEntity.ok(result);
+//    }
 
 }
