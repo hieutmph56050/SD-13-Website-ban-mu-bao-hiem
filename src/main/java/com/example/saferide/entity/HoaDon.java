@@ -9,7 +9,6 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Locale;
 
 @Getter
@@ -51,6 +50,9 @@ public class HoaDon {
 
     @Column(name = "sotiendatra", precision = 18, scale = 2)
     private BigDecimal soTienDaTra;
+
+    @Column(name = "PhiVanChuyen", precision = 18, scale = 2)
+    private BigDecimal phiVanChuyen;
 
     public String getFormattedGia() {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));

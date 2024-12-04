@@ -1,5 +1,4 @@
 package com.example.saferide.config;
-
 import com.example.saferide.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

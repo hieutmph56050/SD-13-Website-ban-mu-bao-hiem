@@ -42,8 +42,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(req -> req
-                 .requestMatchers("/api/admin/**","/api/staff/**","/api/user/**").authenticated()
-                .anyRequest().permitAll()
+                        .requestMatchers("/admin/**").hasRole("Admin")  // Only ADMIN can access
+                        .requestMatchers("/staff/**").hasRole("Staff")  // Only STAFF can access
+                        .requestMatchers("/user/**").authenticated()   // Any logged-in user
+                        .anyRequest().permitAll()                          // All other requests are open
                 )
                 .csrf(csrf -> csrf.disable())
                 .authenticationProvider(authenticationProvider())

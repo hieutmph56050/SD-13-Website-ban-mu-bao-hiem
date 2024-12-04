@@ -63,14 +63,7 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>9.4.1.jre16</version>
-        </dependency>
-
-        <!-- Hibernate Core (Jakarta EE version) -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core-jakarta</artifactId>
-            <version>5.6.10.Final</version>
+            <version>12.2.0.jre11</version>
         </dependency>
 
         <!-- Spring Boot Starter Data JPA -->
@@ -80,12 +73,13 @@
         </dependency>
 
         <!-- JSTL API and Implementation for Jakarta EE -->
-        <!-- Jakarta Servlet JSP JSTL API -->
+
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-            <version>2.0.0</version>
+            <version>3.0.1</version>
         </dependency>
+
 
         <!-- Jakarta Servlet Implementation -->
         <dependency>
