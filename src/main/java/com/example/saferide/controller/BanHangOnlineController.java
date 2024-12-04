@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("online")
 public class BanHangOnlineController {
 
     @Autowired
@@ -280,6 +280,27 @@ public class BanHangOnlineController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi khi tạo file PDF: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/trang-thai")
+    public ResponseEntity<?> capNhatTrangThaiHoaDon(@RequestParam Integer hoaDonId, @RequestParam String trangThaiMoi) {
+        // Kiểm tra hóa đơn tồn tại
+        Optional<HoaDon> hoaDonOpt = hoaDonRepository.findById(hoaDonId);
+        if (hoaDonOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Hóa đơn không tồn tại");
+        }
+        HoaDon hoaDon = hoaDonOpt.get();
+        List<String> trangThaiHopLe = List.of("Chưa xác nhận", "Đã xác nhận", "Đang giao hàng", "Hoàn thành", "Đã Hủy", "Hoàn trả");
+        if (!trangThaiHopLe.contains(trangThaiMoi)) {
+            return ResponseEntity.badRequest().body("Trạng thái không hợp lệ");
+        }
+        hoaDon.setTt(trangThaiMoi);
+        hoaDon.setNgayGiaoHang(LocalDateTime.now());
+        if (trangThaiMoi.equals("Hoàn thành")) {
+            hoaDon.setNgayNhan(LocalDateTime.now());
+        }
+        hoaDonRepository.save(hoaDon);
+        return ResponseEntity.ok("Cập nhật trạng thái hóa đơn thành công: " + hoaDon.getMa());
     }
 }
 //package com.example.saferide.controller;
