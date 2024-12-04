@@ -156,7 +156,7 @@ public class AdminController {
         hoaDon.setIdTaiKhoan(taiKhoan);
         hoaDon.setNgayTao(LocalDateTime.now());
         hoaDon.setTongTien(tongTien);
-        hoaDon.setLoaiHoaDon("Hóa Đơn Online");
+        hoaDon.setLoaiHoaDon(2);
         String diaChi = soNha + ", Xã " + xa + ", Huyện " + huyen + ", " + thanhPho;
         hoaDon.setDiaChi(diaChi);
         hoaDon.setTt("Chưa thanh toán");
@@ -175,7 +175,6 @@ public class AdminController {
             HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
             hoaDonChiTiet.setIdHoaDon(hoaDon);
             hoaDonChiTiet.setIdSPCT(gioHangChiTiet.getIdSPCT());
-            hoaDonChiTiet.setGia(gioHangChiTiet.getDonGia());
             hoaDonChiTiet.setSl(gioHangChiTiet.getSl());
             hoaDonChiTiet.setTt("Chưa thanh toán");
             String maHDCT = "HDCT" + hoaDon.getId();
@@ -295,7 +294,7 @@ public class AdminController {
                         ? chiTiet.getIdSPCT().getIdSanPham().getTen()
                         : "Không xác định";
 
-                BigDecimal giaSanPham = (chiTiet.getGia() != null) ? chiTiet.getGia() : BigDecimal.ZERO;
+                BigDecimal giaSanPham = chiTiet.getIdSPCT().getDonGia();
                 String soLuong = String.valueOf(chiTiet.getSl());
                 BigDecimal thanhTien = giaSanPham.multiply(BigDecimal.valueOf(chiTiet.getSl()));
 
@@ -335,7 +334,7 @@ public class AdminController {
         hoaDon.setMa("HD" + timeStamp);
 
         // Set default properties
-        hoaDon.setLoaiHoaDon("Hóa đơn Tại Quầy");
+        hoaDon.setLoaiHoaDon(1);
         hoaDon.setTongTien(new BigDecimal("0"));
         hoaDon.setSoTienDaTra(new BigDecimal("0"));
         hoaDon.setGhiChu("Đơn Hàng Bán Tại Quầy");

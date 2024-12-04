@@ -73,7 +73,7 @@ public class UserController {
         hoaDon.setIdTaiKhoan(taiKhoan);
         hoaDon.setNgayTao(LocalDateTime.now());
         hoaDon.setTongTien(tongTien);
-        hoaDon.setLoaiHoaDon("Hóa Đơn Online");
+        hoaDon.setLoaiHoaDon(2);
         String diaChi = soNha + ", Xã " + xa + ", Huyện " + huyen + ", " + thanhPho;
         hoaDon.setDiaChi(diaChi);
         hoaDon.setTt("Chưa thanh toán");
@@ -92,7 +92,7 @@ public class UserController {
             HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
             hoaDonChiTiet.setIdHoaDon(hoaDon);
             hoaDonChiTiet.setIdSPCT(gioHangChiTiet.getIdSPCT());
-            hoaDonChiTiet.setGia(gioHangChiTiet.getDonGia());
+//            hoaDonChiTiet.setGia(gioHangChiTiet.getDonGia());
             hoaDonChiTiet.setSl(gioHangChiTiet.getSl());
             hoaDonChiTiet.setTt("Chưa thanh toán");
             String maHDCT = "HDCT" + hoaDon.getId();

@@ -6,6 +6,7 @@ import com.example.saferide.response.ProductResponse;
 import com.example.saferide.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ public class SPChiTietController {
     @Autowired
     SPChiTietService service;
 
+    @PreAuthorize("hasRole('ROLE_Admin')")
     @GetMapping("/danhsach")
     public ResponseEntity<?> getAll() {
         ProductResponse<SPChiTiet> listSPChiTiet = new ProductResponse<>();
