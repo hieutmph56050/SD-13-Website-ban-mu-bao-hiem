@@ -507,4 +507,28 @@ use SafeRide
 ALTER TABLE HoaDon
 ALTER COLUMN LoaiHoaDon nvarchar(100)
 
+--Tạo mới ngày 12/6/2024
 ALTER TABLE HoaDon ADD PhiVanChuyen DECIMAL(10, 2)
+
+
+CREATE TABLE KhachHang (
+	ID  BIGINT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+	HoTen       NVARCHAR(255) NOT NULL,
+	SDT        VARCHAR(15),
+	NgayTao     DATETIME DEFAULT GETDATE(),
+    NgayCapNhat DATETIME,
+    TrangThai BIT NOT NULL DEFAULT 0
+);
+
+ALTER TABLE HoaDon ADD ID_KhachHang BIGINT NULL
+
+INSERT INTO KhachHang (HoTen, SDT, NgayCapNhat, TrangThai) 
+VALUES
+('Nguyen Thi A', '0901234567', NULL, 1),
+('Tran Minh B', '0902345678', NULL, 0),
+('Pham Lan C', '0903456789', NULL, 1),
+('Le Thi D', '0904567890', NULL, 0),
+('Hoang Minh E', '0905678901', NULL, 1),
+(N'Khách Hàng Lẻ',NULL, NULL, 1);
+
+alter table HoaDon ALTER COLUMN DiaChi NVARCHAR(100)

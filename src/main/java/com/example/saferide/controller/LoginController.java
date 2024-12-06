@@ -2,22 +2,17 @@ package com.example.saferide.controller;
 
 import com.example.saferide.dto.Token;
 import com.example.saferide.entity.TaiKhoan;
-import com.example.saferide.service.CustomUserDetailsService;
 import com.example.saferide.service.TaiKhoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
 public class LoginController {
-
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-
-    public BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     TaiKhoanService taiKhoanService;
