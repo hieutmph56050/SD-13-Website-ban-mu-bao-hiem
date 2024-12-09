@@ -18,7 +18,6 @@ import java.util.List;
 @Table(name = "GioHang")
 public class GioHang {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne

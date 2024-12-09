@@ -27,14 +27,6 @@ public class GioHangController {
         listGioHang.data = service.getList();
         return ResponseEntity.ok(listGioHang);
     }
-
-    @RequestMapping("/index")
-    public String showGioHangList(Model model) {
-        List<GioHang> listGioHang = service.getList();
-        model.addAttribute("list", listGioHang);
-        return "giohang/index";
-    }
-
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody GioHang gioHang) {
         return ResponseEntity.ok(service.add(gioHang));

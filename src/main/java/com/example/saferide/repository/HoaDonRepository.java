@@ -3,6 +3,7 @@ package com.example.saferide.repository;
 
 import com.example.saferide.entity.GioHang;
 import com.example.saferide.entity.HoaDon;
+import com.example.saferide.entity.HoaDonChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,11 +24,11 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Integer> {
 
     Optional<HoaDon> findByMa(String maHoaDon);
 
-    //    List<HoaDon> findByMa(String maHoaDon);
     @Query("SELECT h FROM HoaDon h WHERE h.ma = :maHoaDon")
     Optional<HoaDon> findByMaHoaDon(String maHoaDon);
 
-//    List<HoaDon> findByMa(String maHoaDon);
+    @Query("SELECT hdc FROM HoaDon hdc WHERE hdc.loaiHoaDon = :loaiHoaDon")
+    List<HoaDon> findHDByLoaiHoaDon(@Param("loaiHoaDon") Integer loaiHoaDon);
 
     // Lấy doanh thu theo ngày
     @Query(value = "SELECT SUM(h.tongTien) " +

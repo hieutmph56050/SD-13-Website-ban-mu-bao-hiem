@@ -51,9 +51,6 @@ public class HoaDon {
     @Column(name = "sotiendatra", precision = 18, scale = 2)
     private BigDecimal soTienDaTra;
 
-    @Column(name = "PhiVanChuyen", precision = 18, scale = 2)
-    private BigDecimal phiVanChuyen;
-
     public String getFormattedGia() {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         return formatter.format(tongTien);
