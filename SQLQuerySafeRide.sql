@@ -532,3 +532,5 @@ VALUES
 (N'Khách Hàng Lẻ',NULL, NULL, 1);
 
 alter table HoaDon ALTER COLUMN DiaChi NVARCHAR(100)
+
+alter table SanPhamChiTiet ADD GiaGiam DECIMAL(18, 2)

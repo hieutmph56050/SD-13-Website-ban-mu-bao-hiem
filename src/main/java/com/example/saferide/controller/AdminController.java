@@ -3,8 +3,10 @@ package com.example.saferide.controller;
 import com.example.saferide.config.VNPayConfig;
 import com.example.saferide.entity.*;
 import com.example.saferide.repository.*;
+import com.example.saferide.request.KhuyenMaiRequest;
 import com.example.saferide.request.ThanhToanRequest;
 import com.example.saferide.service.HoaDonService;
+import com.example.saferide.service.KhuyenMaiService;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -73,6 +75,9 @@ public class AdminController {
 
     @Autowired
     private KhachHangRepository khachHangRepository;
+
+    @Autowired
+    private KhuyenMaiService khuyenMaiService;
 
     @PreAuthorize("hasRole('ROLE_Admin')")
     @PostMapping("/them-hoa-don")
@@ -1072,6 +1077,29 @@ public class AdminController {
 
         } catch (Exception ex) {
             return "";
+        }
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_Admin')")
+    @PostMapping("/khuyen-mai")
+    public ResponseEntity<String> addKhuyenMai(@RequestBody KhuyenMaiRequest request) {
+        try {
+            khuyenMaiService.addKhuyenMaiToProductDetails(request);
+            return ResponseEntity.ok("Thêm khuyến mãi thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_Admin')")
+    @PutMapping("/sua-khuyen-mai")
+    public ResponseEntity<String> suaKhuyenMai(@RequestBody KhuyenMaiRequest request) {
+        try {
+            khuyenMaiService.updateKhuyenMai(request);
+            return ResponseEntity.ok("Cập nhật thành công !");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
