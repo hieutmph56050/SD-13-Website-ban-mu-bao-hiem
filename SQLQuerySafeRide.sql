@@ -534,3 +534,15 @@ VALUES
 alter table HoaDon ALTER COLUMN DiaChi NVARCHAR(100)
 
 alter table SanPhamChiTiet ADD GiaGiam DECIMAL(18, 2)
+
+--Sửa đổi ngày 03/01/2025 Thêm bảng Hoàn Trả
+
+CREATE TABLE HoanTra (
+	ID BIGINT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+	ID_HoaDon BIGINT      NOT NULL,
+	NgayHoanTra DATETIME,
+	LyDo NVARCHAR(200) NOT NULL,
+	TongTienHoanTra DECIMAL(18, 2) NOT NULL,
+	TrangThai NVARCHAR(200) NOT NULL
+)
+

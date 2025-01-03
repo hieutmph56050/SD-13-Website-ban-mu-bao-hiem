@@ -3,9 +3,13 @@ package com.example.saferide.controller;
 import com.example.saferide.config.VNPayConfig;
 import com.example.saferide.entity.*;
 import com.example.saferide.repository.*;
+import com.example.saferide.request.AddToCartRequest;
+import com.example.saferide.request.HoanTraRequest;
 import com.example.saferide.request.KhuyenMaiRequest;
 import com.example.saferide.request.ThanhToanRequest;
+import com.example.saferide.service.GioHangService;
 import com.example.saferide.service.HoaDonService;
+import com.example.saferide.service.HoanTraService;
 import com.example.saferide.service.KhuyenMaiService;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.PdfEncodings;
@@ -78,6 +82,12 @@ public class AdminController {
 
     @Autowired
     private KhuyenMaiService khuyenMaiService;
+
+    @Autowired
+    private GioHangService gioHangService;
+
+    @Autowired
+    private HoanTraService hoanTraService;
 
     @PreAuthorize("hasRole('ROLE_Admin')")
     @PostMapping("/them-hoa-don")
@@ -1080,7 +1090,6 @@ public class AdminController {
         }
     }
 
-
     @PreAuthorize("hasRole('ROLE_Admin')")
     @PostMapping("/khuyen-mai")
     public ResponseEntity<String> addKhuyenMai(@RequestBody KhuyenMaiRequest request) {
@@ -1101,6 +1110,16 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/them-sp-online")
+    public ResponseEntity<String> addProductToCart(@RequestBody AddToCartRequest request) {
+        gioHangService.addProductToCart(
+                request.getCartId()
+                , request.getProductId()
+                , request.getQuantity()
+                , request.getIdKichThuoc());
+        return ResponseEntity.ok("Product added to cart successfully");
     }
 
 }
