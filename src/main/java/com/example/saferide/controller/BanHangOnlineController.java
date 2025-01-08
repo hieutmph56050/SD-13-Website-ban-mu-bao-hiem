@@ -283,7 +283,7 @@ public class BanHangOnlineController {
             return ResponseEntity.badRequest().body("Hóa đơn không tồn tại");
         }
         HoaDon hoaDon = hoaDonOpt.get();
-        List<String> trangThaiHopLe = List.of("Chưa xác nhận", "Đã xác nhận", "Đang giao hàng", "Hoàn thành", "Đã Hủy", "Hoàn trả");
+        List<String> trangThaiHopLe = List.of("Chưa xác nhận", "Đã xác nhận", "Đang giao hàng", "Hoàn thành", "Đã hủy", "Hoàn trả");
         if (!trangThaiHopLe.contains(trangThaiMoi)) {
             return ResponseEntity.badRequest().body("Trạng thái không hợp lệ");
         }

@@ -55,7 +55,7 @@ public class GioHangController {
                     throw new IllegalStateException("Thông tin sản phẩm không đầy đủ.");
                 }
                 SPChiTiet dto = new SPChiTiet();
-                dto.setId(gioHangChiTiet.getId());
+                dto.setId(gioHangChiTiet.getIdSPCT().getId());
                 dto.setIdSanPham(gioHangChiTiet.getIdSPCT().getIdSanPham());
                 dto.setSl(gioHangChiTiet.getSl());
                 dto.setDonGia(gioHangChiTiet.getIdSPCT().getDonGia());

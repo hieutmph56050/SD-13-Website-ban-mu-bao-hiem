@@ -31,7 +31,7 @@ public class HoaDonController {
     @GetMapping("/danh-sach")
     public ResponseEntity<?> getList() {
         InvoiceResponse<HoaDon> listHoaDon = new InvoiceResponse<>();
-        listHoaDon.data = hdRepository.findAll().stream().sorted(Comparator.comparing(HoaDon::getMa).reversed()).toList();
+        listHoaDon.data = hdRepository.findAll().stream().sorted(Comparator.comparing(HoaDon::getNgayTao).reversed()).toList();
         return ResponseEntity.ok(listHoaDon);
     }
 
@@ -51,6 +51,7 @@ public class HoaDonController {
 
         HoaDonResponse responseHD = new HoaDonResponse();
         responseHD.setData(Collections.singletonList(dataRes));
+
         return ResponseEntity.ok(responseHD);
     }
 

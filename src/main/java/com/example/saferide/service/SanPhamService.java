@@ -35,6 +35,14 @@ public class SanPhamService {
             return sanphamRepository.save(sanPham1);
         }).orElse(null);
     }
+
+    public SanPham updateTTSanPham(SanPham sanPham, Integer id) {
+        Optional<SanPham> optional = sanphamRepository.findById(id);
+        return optional.map(sp -> {
+            sp.setTt(sanPham.getTt());
+            return sanphamRepository.save(sp);
+        }).orElse(null);
+    }
     public SanPham delete(Integer id) {
         Optional<SanPham> optional = sanphamRepository.findById(id);
         return optional.map(sanPham1 -> {
