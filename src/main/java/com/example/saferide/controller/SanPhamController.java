@@ -1,9 +1,14 @@
 package com.example.saferide.controller;
 
+import com.example.saferide.entity.HoaDon;
+import com.example.saferide.entity.SPChiTiet;
 import com.example.saferide.entity.SanPham;
-import com.example.saferide.response.ProductResponse;
+import com.example.saferide.repository.SPChiTietRepository;
+import com.example.saferide.response.*;
+import com.example.saferide.service.SPChiTietService;
 import com.example.saferide.service.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +17,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -21,18 +28,17 @@ public class SanPhamController {
     @Autowired
     SanPhamService service;
 
+    @Autowired
+    SPChiTietService CTService;
+
+    @Autowired
+    SPChiTietRepository spctRepo;
+
     @GetMapping("/danhsach")
     public ResponseEntity<?> getAll() {
         ProductResponse<SanPham> listSanPham = new ProductResponse<>();
         listSanPham.data = service.getList();
         return ResponseEntity.ok(listSanPham);
-    }
-
-    @RequestMapping("/index")
-    public String showProductList(Model model) {
-        List<SanPham> listSanPham = service.getList();
-        model.addAttribute("list", listSanPham);
-        return "sanpham/index";
     }
 
     @PostMapping("/add")
@@ -42,7 +48,12 @@ public class SanPhamController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody SanPham sanPham) {
-        return ResponseEntity.ok(service.update(sanPham, id));
+        SanPham existingSanPham = service.findById(id);
+        if (existingSanPham == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sản phẩm không tồn tại");
+        }
+        SanPham updatedSanPham = service.update(sanPham, id);
+        return ResponseEntity.ok(updatedSanPham);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -50,9 +61,34 @@ public class SanPhamController {
         return ResponseEntity.ok(service.delete(id));
     }
 
+    @GetMapping("/dsct")
+    public ResponseEntity<?> findAllProductDetails() {
+        List<SanPham> sanPhamList = service.getList();
+        List<ListSanPhamResponse.SanPhamRes> responseList = new ArrayList<>();
+        for (SanPham sanPham : sanPhamList) {
+            if (sanPham != null) {
+                ListSanPhamResponse.SanPhamRes dataRes = new ListSanPhamResponse.SanPhamRes();
+                dataRes.setSanPham(sanPham);
+                dataRes.setChiTietList(spctRepo.findByIDSP(sanPham.getId()));
+                responseList.add(dataRes);
+            }
+        }
+
+        ListSanPhamResponse listData = new ListSanPhamResponse();
+        listData.setData(responseList);
+        return ResponseEntity.ok(listData);
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable Integer id) {
-        return ResponseEntity.ok(service.findById(id));
+        SanPham sanPham = service.findById(id);
+        SanPhamResponse.SanPhamRes dataRes = new SanPhamResponse.SanPhamRes();
+        dataRes.setSanPham(sanPham);
+        dataRes.setChiTietList(spctRepo.findByIDSP(sanPham.getId()));
+
+        SanPhamResponse resSP = new SanPhamResponse();
+        resSP.setData(dataRes);
+        return ResponseEntity.ok(resSP);
     }
     @GetMapping("/search")
     public ResponseEntity<?> search(

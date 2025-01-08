@@ -63,19 +63,19 @@ public class TaiKhoanService {
         }).orElse(null);
     }
 
-    public TaiKhoan dangKi(TaiKhoan taiKhoan){
+    public TaiKhoan dangKi(TaiKhoan taiKhoan) {
         Optional<TaiKhoan> taiKhoanOptional = taikhoanRepository.findByTenDangNhap(taiKhoan.getTenDangNhap());
-        if(taiKhoanOptional.isPresent()){
-            throw new RuntimeException("Ten tai khoan da ton tai");
+        if (taiKhoanOptional.isPresent()) {
+            throw new RuntimeException("Tên đăng nhập đã tồn tại, vui lòng nhập tên đăng nhập khác!");
         }
         taiKhoan.setMatKhau(passwordEncoder.encode(taiKhoan.getMatKhau()));
         return taikhoanRepository.save(taiKhoan);
     }
 
     public String login(TaiKhoan taiKhoan) {
-        TaiKhoan taiKhoan1 = taikhoanRepository.findByTenDangNhap(taiKhoan.getTenDangNhap()).orElseThrow(() -> new RuntimeException("Tai khoan khong ton tai"));
+        TaiKhoan taiKhoan1 = taikhoanRepository.findByTenDangNhap(taiKhoan.getTenDangNhap()).orElseThrow(() -> new RuntimeException("Thông tin tài khoản hoặc mật khẩu không đúng!"));
         if (!passwordEncoder.matches(taiKhoan.getMatKhau(), taiKhoan1.getMatKhau())) {
-            throw new RuntimeException("Mat khau khong ton tai");
+            throw new RuntimeException("Thông tin tài khoản hoặc mật khẩu không đúng!");
         }
         return jwtService.generateToken(taiKhoan1);
     }

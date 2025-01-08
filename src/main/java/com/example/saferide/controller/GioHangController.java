@@ -27,14 +27,6 @@ public class GioHangController {
         listGioHang.data = service.getList();
         return ResponseEntity.ok(listGioHang);
     }
-
-    @RequestMapping("/index")
-    public String showGioHangList(Model model) {
-        List<GioHang> listGioHang = service.getList();
-        model.addAttribute("list", listGioHang);
-        return "giohang/index";
-    }
-
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody GioHang gioHang) {
         return ResponseEntity.ok(service.add(gioHang));
@@ -63,7 +55,7 @@ public class GioHangController {
                     throw new IllegalStateException("Thông tin sản phẩm không đầy đủ.");
                 }
                 SPChiTiet dto = new SPChiTiet();
-                dto.setId(gioHangChiTiet.getId());
+                dto.setId(gioHangChiTiet.getIdSPCT().getId());
                 dto.setIdSanPham(gioHangChiTiet.getIdSPCT().getIdSanPham());
                 dto.setSl(gioHangChiTiet.getSl());
                 dto.setDonGia(gioHangChiTiet.getIdSPCT().getDonGia());

@@ -71,6 +71,7 @@ public class HoaDonChiTietController {
         return ResponseEntity.ok(listHoaDonChiTiet);
     }
 
+
     @GetMapping("/search")
     public ResponseEntity<?> search(
             @RequestParam(required = false) String mahdct,

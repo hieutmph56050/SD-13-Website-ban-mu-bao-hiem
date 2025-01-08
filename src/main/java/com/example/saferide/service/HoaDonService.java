@@ -1,4 +1,5 @@
 package com.example.saferide.service;
+import com.example.saferide.entity.HoaDonChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.example.saferide.entity.HoaDon;
@@ -17,6 +18,9 @@ public class HoaDonService{
     @Autowired
     HoaDonRepository hoadonRepository;
 
+    public List<HoaDon> getListByBillType(Integer loaihd){
+        return  hoadonRepository.findHDByLoaiHoaDon(loaihd);
+    }
     public List<HoaDon> getList() {
         return hoadonRepository.findAll();
     }

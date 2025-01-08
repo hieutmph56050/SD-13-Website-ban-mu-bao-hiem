@@ -26,13 +26,6 @@ public class VoucherController {
         return ResponseEntity.ok(listVoucher);
     }
 
-    @RequestMapping("/index")
-    public String showVoucherList(Model model) {
-        List<Voucher> listVoucher = service.getList();
-        model.addAttribute("list", listVoucher);
-        return "voucher/index";
-    }
-
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody Voucher voucher){
         return ResponseEntity.ok(service.add(voucher));
