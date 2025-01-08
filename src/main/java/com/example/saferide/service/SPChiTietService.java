@@ -67,4 +67,8 @@ public class SPChiTietService {
         return spchitietRepository.findByMaContainingOrMoTaCTContainingOrXuatXuContainingAndSlGreaterThanEqual(
                 keyword, keyword, keyword, quantity);
     }
+
+    public SPChiTiet getProductById(int id) {
+        return spchitietRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+    }
 }

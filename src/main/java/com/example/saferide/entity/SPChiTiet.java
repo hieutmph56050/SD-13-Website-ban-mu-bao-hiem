@@ -27,7 +27,7 @@ public class SPChiTiet {
     private String ma;
 
     @ManyToOne
-    @JoinColumn(name = "id_sp",referencedColumnName = "id")
+    @JoinColumn(name = "id_sp", referencedColumnName = "id")
     private SanPham idSanPham;
 
     @JoinColumn(name = "id_thuonghieu", referencedColumnName = "id")
@@ -64,9 +64,12 @@ public class SPChiTiet {
 
     @Column(name = "soluong")
     private int sl;
-  
+
     @Column(name = "DonGia", precision = 10, scale = 2)
-   private BigDecimal donGia;
+    private BigDecimal donGia;
+
+    @Column(name = "GiaGiam", precision = 10, scale = 2)
+    private BigDecimal giaGiam;
 
     @Column(name = "motachitiet")
     private String moTaCT;
@@ -94,7 +97,7 @@ public class SPChiTiet {
     @Column(name = "nguoicapnhat")
     private String nguoiCapNhat;
 
-//    @Temporal(TemporalType.TIMESTAMP)
+    //    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T:'HH:mm")
     @Column(name = "ngaycapnhat")
     private LocalDateTime ngayCapNhat;
@@ -103,6 +106,7 @@ public class SPChiTiet {
     protected void onCreate() {
         ngayTao = LocalDateTime.now(); // Gán thời gian hiện tại
     }
+
     @PreUpdate
     protected void onUpdate() {
         ngayCapNhat = LocalDateTime.now(); // Gán thời gian hiện tại khi cập nhật

@@ -36,10 +36,10 @@ public class KhuyenMaiController {
         model.addAttribute("list", listKhuyenMai);
         return "khuyenmai/index";
     }
-    @PostMapping("/add")
-    public ResponseEntity<?> add(@RequestBody KhuyenMai khuyenMai){
-        return ResponseEntity.ok(service.add(khuyenMai));
-    }
+//    @PostMapping("/add")
+//    public ResponseEntity<?> add(@RequestBody KhuyenMai khuyenMai){
+//        return ResponseEntity.ok(service.add(khuyenMai));
+//    }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody KhuyenMai khuyenMai){

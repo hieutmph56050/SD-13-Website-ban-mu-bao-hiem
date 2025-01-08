@@ -7,10 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SPChiTietRepository extends JpaRepository<SPChiTiet, Integer> {
@@ -22,4 +22,9 @@ public interface SPChiTietRepository extends JpaRepository<SPChiTiet, Integer> {
 
     List<SPChiTiet> findByMaContainingOrMoTaCTContainingOrXuatXuContainingAndSlGreaterThanEqual(
             String ma, String moTaCT, String xuatXu, int sl);
+
+    @Query("""
+        SELECT spct FROM SPChiTiet spct WHERE spct.id = :id and spct.idKichThuoc = :idKichThuoc
+""")
+    Optional<SPChiTiet> findByIdAndIdKichThuoc_Id(int id, int idKichThuoc);
 }

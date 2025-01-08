@@ -8,9 +8,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface KhuyenMaiRepository extends JpaRepository<KhuyenMai, Integer> {
     // Tìm kiếm theo mã hoặc tên khuyến mãi
     List<KhuyenMai> findByMaContainingOrTenContaining(String ma, String ten);
+
+    Optional<KhuyenMai> findByMa(String ma);
+
 }
