@@ -13,4 +13,5 @@ public class DatHangRequest {
     private Integer idTaiKhoan;
     private String diachi;
     private List<SPChiTiet> sanPhamList;
+    private Integer voucherId;
 }

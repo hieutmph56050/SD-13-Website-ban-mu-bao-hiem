@@ -1,10 +1,13 @@
 package com.example.saferide.controller;
 
 import com.example.saferide.entity.KhuyenMai;
+import com.example.saferide.request.KhuyenMaiRequest;
 import com.example.saferide.response.ProductResponse;
 import com.example.saferide.service.KhuyenMaiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -68,4 +71,25 @@ public class KhuyenMaiController {
         Page<KhuyenMai> result = service.getPage(pageable);
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/khuyen-mai")
+    public ResponseEntity<String> addKhuyenMai(@RequestBody KhuyenMaiRequest request) {
+        try {
+            service.addKhuyenMaiToProductDetails(request);
+            return ResponseEntity.ok("Thêm khuyến mãi thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/sua-khuyen-mai")
+    public ResponseEntity<String> suaKhuyenMai(@RequestBody KhuyenMaiRequest request) {
+        try {
+            service.updateKhuyenMai(request);
+            return ResponseEntity.ok("Cập nhật thành công !");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
 }

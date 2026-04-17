@@ -164,7 +164,7 @@ public class KhuyenMaiService {
     public void updateKhuyenMai(KhuyenMaiRequest request) {
         // Check if the promo code exists
         Optional<KhuyenMai> existingKhuyenMai = khuyenMaiRepository.findByMa(request.getMa());
-        if (!existingKhuyenMai.isPresent()) {
+        if (existingKhuyenMai.isEmpty()) {
             throw new IllegalArgumentException("Mã khuyến mại không tồn tại");
         }
 
@@ -179,17 +179,14 @@ public class KhuyenMaiService {
         khuyenMai.setTt(request.getTt());
 
         // Set the creator (optional)
-        String nguoiTao = "Unknown User"; // Default value
+        String nguoiTao = "Unknown User";
         if (request.getNguoiTao() != null && !request.getNguoiTao().isEmpty()) {
             nguoiTao = request.getNguoiTao();
         } else {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null && authentication.isAuthenticated() &&
-                    !"anonymousUser".equals(authentication.getPrincipal())) {
-
+            if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
                 Object principal = authentication.getPrincipal();
-                if (principal instanceof UserDetails) {
-                    UserDetails userDetails = (UserDetails) principal;
+                if (principal instanceof UserDetails userDetails) {
                     TaiKhoan taiKhoan = taiKhoanRepository.findByTenDangNhap(userDetails.getUsername())
                             .orElse(null);
                     if (taiKhoan != null) {
@@ -213,15 +210,8 @@ public class KhuyenMaiService {
 
                 // Calculate the price after discount
                 BigDecimal giaGoc = spChiTiet.getDonGia(); // Original price
-                BigDecimal giaGiam = BigDecimal.ZERO;
+                BigDecimal giaGiam =khuyenMai.getGiaTri() ;
 
-                if (khuyenMai.getPTKM() != null && khuyenMai.getGiaTri().compareTo(BigDecimal.ZERO) > 0) {
-                    // Calculate based on promo percentage
-                    giaGiam = giaGoc.multiply(khuyenMai.getGiaTri()).divide(BigDecimal.valueOf(100));
-                } else if (khuyenMai.getGiaTri() != null && khuyenMai.getGiaTri().compareTo(BigDecimal.ZERO) > 0) {
-                    // Calculate based on promo value
-                    giaGiam = khuyenMai.getGiaTri();
-                }
 
                 // Update the new price (non-negative)
                 BigDecimal newPrice = giaGoc.subtract(giaGiam);

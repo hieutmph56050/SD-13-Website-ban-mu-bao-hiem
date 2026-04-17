@@ -1,9 +1,9 @@
-
 package com.example.saferide.controller;
 
 import com.example.saferide.entity.*;
 import com.example.saferide.repository.*;
 import com.example.saferide.request.DatHangRequest;
+import com.example.saferide.response.ResponseSuccessOrder;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -29,7 +29,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +54,14 @@ public class BanHangOnlineController {
     @Autowired
     private HoaDonChiTietRepository hoaDonChiTietRepository;
 
+
+    @Autowired
+    private VoucherRepository voucherRepository;
+
+    @Autowired
+    SanPhamRepository sanphamRepository;
+
+
     @PreAuthorize("hasRole('ROLE_Admin')")
     @DeleteMapping("/xoa/{id}")
     public ResponseEntity<?> xoaGioHang(@PathVariable Integer id) {
@@ -63,23 +70,17 @@ public class BanHangOnlineController {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_Admin','ROLE_User')")
     @PostMapping("/gio-hang/them-san-pham")
-    public ResponseEntity<?> themSanPham(@RequestParam Integer productId,
-                                         @RequestParam Integer idTaiKhoan,
-                                         @RequestParam int soLuong) {
-        // Find product by ID
+    public ResponseEntity<?> themSanPham(@RequestParam Integer productId, @RequestParam Integer idTaiKhoan, @RequestParam int soLuong) {
         SPChiTiet spChiTiet = spChiTietRepository.findById(productId).orElse(null);
         if (spChiTiet == null) {
             return ResponseEntity.badRequest().body("Sản phẩm chi tiết không tồn tại");
         }
-        // Find account by ID
         TaiKhoan taiKhoan = taiKhoanRepository.findById(idTaiKhoan).orElse(null);
         if (taiKhoan == null) {
             return ResponseEntity.badRequest().body("Tài khoản không tồn tại");
         }
 
-        // Find or create cart
         GioHang gioHang = gioHangRepository.findByIdTaiKhoanGH(idTaiKhoan);
         if (gioHang == null) {
             gioHang = new GioHang();
@@ -108,12 +109,30 @@ public class BanHangOnlineController {
     @PostMapping("/dat-hang")
     public ResponseEntity<?> datHangOnline(@RequestBody DatHangRequest datHangRequest) throws Exception {
         TaiKhoan taiKhoan = taiKhoanRepository.findById(datHangRequest.getIdTaiKhoan()).orElseThrow(() -> new Exception("Tài khoản không tồn tại"));
-
         BigDecimal tongTien = BigDecimal.ZERO;
         for (SPChiTiet sanPham : datHangRequest.getSanPhamList()) {
             BigDecimal donGia = sanPham.getDonGia();
             Integer soLuong = sanPham.getSl();
             tongTien = tongTien.add(donGia.multiply(BigDecimal.valueOf(soLuong)));
+        }
+
+        if (datHangRequest.getVoucherId() != null) {
+            Voucher voucher = voucherRepository.findById(datHangRequest.getVoucherId()).orElseThrow(() -> new Exception("Voucher không tồn tại"));
+
+            if (voucher.getNgayBD().isAfter(LocalDateTime.now()) || voucher.getNgayKT().isBefore(LocalDateTime.now())) {
+                throw new Exception("Voucher không còn hiệu lực");
+            }
+            BigDecimal giamGia = tongTien.multiply(voucher.getGiaTri().divide(BigDecimal.valueOf(100)));
+            if (voucher.getGiaTriMax() != null && giamGia.compareTo(voucher.getGiaTriMax()) > 0) {
+                giamGia = voucher.getGiaTriMax();
+            }
+            tongTien = tongTien.subtract(giamGia);
+            if (voucher.getGioihan() > 0) {
+                voucher.setGioihan(voucher.getGioihan() - 1);
+                voucherRepository.save(voucher);
+            } else {
+                throw new Exception("Voucher đã hết số lượng sử dụng");
+            }
         }
 
         String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMdHms"));
@@ -124,7 +143,7 @@ public class BanHangOnlineController {
         hoaDon.setLoaiHoaDon(2);
         hoaDon.setDiaChi(datHangRequest.getDiachi());
         hoaDon.setTt("Chờ xác nhận");
-        hoaDon.setNguoiTao("Phạm Anh Tuấn");
+        hoaDon.setNguoiTao(taiKhoan.getTen());
         hoaDon.setMa("HD" + timeStamp);
         hoaDonRepository.save(hoaDon);
 
@@ -138,10 +157,73 @@ public class BanHangOnlineController {
             hoaDonChiTiet.setMahdct("HDCT" + timeStamp);
             hoaDonChiTiet.setTongTien(sanPham.getDonGia().multiply(BigDecimal.valueOf(sanPham.getSl())));
             hoaDonChiTietRepository.save(hoaDonChiTiet);
+
+
+            SPChiTiet spChiTiet = spChiTietRepository.findById(sanPham.getId()).orElse(null);
+            assert spChiTiet != null;
+            sanPham.setSl(spChiTiet.getSl() - 1);
+            if (sanPham.getGiaGiam() == null) {
+                sanPham.setGiaGiam(new BigDecimal(0));
+            } else {
+                sanPham.setGiaGiam(sanPham.getGiaGiam());
+            }
+
+            if (sanPham.getSl() <= 0) {
+                sanPham.setTt("Hết hàng");
+                spChiTietRepository.save(sanPham);
+            } else {
+                spChiTietRepository.save(sanPham);
+            }
+
+            GioHang gioHang = gioHangRepository.findByIdTaiKhoanGH(taiKhoan.getId());
+
+            Optional<GioHangChiTiet> existingGioHangChiTiet = gioHangChiTietRepository.findByIdGioHangAndIdSPCT(gioHang, sanPham);
+            if (existingGioHangChiTiet.isPresent()) {
+                GioHangChiTiet gioHangChiTiet = existingGioHangChiTiet.get();
+                if (gioHangChiTiet.getSl() <= 1) {
+                    gioHangChiTietRepository.delete(gioHangChiTiet);
+                } else {
+                    gioHangChiTiet.setSl(gioHangChiTiet.getSl() - 1);
+                    gioHangChiTietRepository.save(gioHangChiTiet);
+                }
+            }
         }
 
-        return ResponseEntity.ok(Collections.singletonMap("data", "Thanh cong"));
+        ResponseSuccessOrder response = new ResponseSuccessOrder();
+        ResponseSuccessOrder.ResOrder resOrder = new ResponseSuccessOrder.ResOrder();
+        resOrder.setMsg("Thanh cong");
+        resOrder.setMaHD(hoaDon.getMa());
+        response.setData(resOrder);
+
+        return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/gio-hang/xoa-san-pham")
+    public ResponseEntity<?> xoaSanPham(@RequestParam Integer productId, @RequestParam Integer idTaiKhoan) {
+        SPChiTiet spChiTiet = spChiTietRepository.findById(productId).orElse(null);
+        if (spChiTiet == null) {
+            return ResponseEntity.badRequest().body("Sản phẩm chi tiết không tồn tại");
+        }
+
+        TaiKhoan taiKhoan = taiKhoanRepository.findById(idTaiKhoan).orElse(null);
+        if (taiKhoan == null) {
+            return ResponseEntity.badRequest().body("Tài khoản không tồn tại");
+        }
+
+        GioHang gioHang = gioHangRepository.findByIdTaiKhoanGH(idTaiKhoan);
+        if (gioHang == null) {
+            return ResponseEntity.badRequest().body("Giỏ hàng không tồn tại");
+        }
+
+        Optional<GioHangChiTiet> existingGioHangChiTiet = gioHangChiTietRepository.findByIdGioHangAndIdSPCT(gioHang, spChiTiet);
+        if (existingGioHangChiTiet.isPresent()) {
+            gioHangChiTietRepository.delete(existingGioHangChiTiet.get());
+            return ResponseEntity.ok("Sản phẩm đã được xoá khỏi giỏ hàng");
+        } else {
+            return ResponseEntity.badRequest().body("Sản phẩm không tồn tại trong giỏ hàng");
+        }
+    }
+
 
     @PreAuthorize("hasAnyRole('ROLE_Admin','ROLE_Staff')")
     @GetMapping("/in-hoa-don")
@@ -213,10 +295,7 @@ public class BanHangOnlineController {
             }
 
             // Tiêu đề hóa đơn
-            document.add(new Paragraph("HÓA ĐƠN CỬA HÀNG SAFE-RIDE")
-                    .setBold()
-                    .setFontSize(18)
-                    .setTextAlignment(TextAlignment.CENTER));
+            document.add(new Paragraph("HÓA ĐƠN CỬA HÀNG SAFE-RIDE").setBold().setFontSize(18).setTextAlignment(TextAlignment.CENTER));
 
             // Thông tin hóa đơn
             document.add(new Paragraph("Mã hóa đơn: " + hoaDon.getMa()));
@@ -226,12 +305,12 @@ public class BanHangOnlineController {
             document.add(new Paragraph("Email : saferide@gmail.com"));
 
             // Thông tin khách hàng
-            String tenKhachHang = (hoaDon.getIdTaiKhoan() != null && hoaDon.getIdTaiKhoan().getTen() != null)
-                    ? hoaDon.getIdTaiKhoan().getTen()
-                    : "Không xác định";
-            document.add(new Paragraph("Khách hàng: " + tenKhachHang));
-            document.add(new Paragraph("Địa chỉ giao hàng: " + hoaDon.getDiaChi()));
-            document.add(new Paragraph("\n"));
+//            String tenKhachHang = (hoaDon.getIdTaiKhoan() != null && hoaDon.getIdTaiKhoan().getTen() != null)
+//                    ? hoaDon.getIdTaiKhoan().getTen()
+//                    : "Không xác định";
+//            document.add(new Paragraph("Khách hàng: " + tenKhachHang));
+//            document.add(new Paragraph("Địa chỉ giao hàng: " + hoaDon.getDiaChi()));
+//            document.add(new Paragraph("\n"));
 
             // Thêm bảng chi tiết hóa đơn
             float[] columnWidths = {2, 1, 1, 1}; // Tỉ lệ độ rộng các cột
@@ -246,9 +325,7 @@ public class BanHangOnlineController {
             // Chi tiết hóa đơn
             BigDecimal tongTien = BigDecimal.ZERO;
             for (HoaDonChiTiet chiTiet : chiTietList) {
-                String tenSanPham = (chiTiet.getIdSPCT() != null && chiTiet.getIdSPCT().getMa() != null)
-                        ? chiTiet.getIdSPCT().getIdSanPham().getTen()
-                        : "Không xác định";
+                String tenSanPham = (chiTiet.getIdSPCT() != null && chiTiet.getIdSPCT().getMa() != null) ? chiTiet.getIdSPCT().getIdSanPham().getTen() : "Không xác định";
 
                 assert chiTiet.getIdSPCT() != null;
                 BigDecimal giaSanPham = chiTiet.getIdSPCT().getDonGia();
@@ -266,9 +343,7 @@ public class BanHangOnlineController {
             }
             document.add(table);
             document.add(new Paragraph("\n"));
-            document.add(new Paragraph("TỔNG TIỀN: " + tongTien.toString() + " VND")
-                    .setBold()
-                    .setFontSize(14));
+            document.add(new Paragraph("TỔNG TIỀN: " + tongTien.toString() + " VND").setBold().setFontSize(14));
             document.close();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi khi tạo file PDF: " + e.getMessage());

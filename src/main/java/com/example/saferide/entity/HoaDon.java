@@ -28,10 +28,10 @@ public class HoaDon {
     @JoinColumn(name = "ID_TaiKhoan", referencedColumnName = "id")
     @ManyToOne
     private TaiKhoan idTaiKhoan;
-
-    @JoinColumn(name = "ID_KhachHang", referencedColumnName = "id")
-    @ManyToOne
-    private KhachHang idKhachHang;
+//
+//    @JoinColumn(name = "ID_KhachHang", referencedColumnName = "id")
+//    @ManyToOne
+//    private KhachHang idKhachHang;
 
     @JoinColumn(name = "id_voucher", referencedColumnName = "id")
     @ManyToOne

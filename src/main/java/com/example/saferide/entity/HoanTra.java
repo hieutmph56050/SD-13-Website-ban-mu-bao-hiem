@@ -35,6 +35,6 @@ public class HoanTra {
     @Column(name = "TongTienHoanTra", precision = 18, scale = 2)
     private BigDecimal tongTienHoanTra;
 
+    @Column(name = "trangThai")
     private String trangThai;
-
 }

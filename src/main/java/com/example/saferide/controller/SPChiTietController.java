@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -35,12 +37,19 @@ public class SPChiTietController {
 
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody SPChiTiet spChiTiet) {
-        return ResponseEntity.ok(service.add(spChiTiet));
+        if (spChiTiet.getGiaGiam() != null) {
+            spChiTiet.setGiaGiam(spChiTiet.getGiaGiam());
+        } else {
+            spChiTiet.setGiaGiam(new BigDecimal(0));
+        }
+        service.add(spChiTiet);
+        return ResponseEntity.ok(Collections.singletonMap("data", "Thanh cong"));
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody SPChiTiet spChiTiet) {
-        return ResponseEntity.ok(service.update(spChiTiet, id));
+        service.update(spChiTiet, id);
+        return ResponseEntity.ok(Collections.singletonMap("data", "Thanh cong"));
     }
 
     @DeleteMapping("/delete/{id}")

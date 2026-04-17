@@ -59,11 +59,11 @@ public class KhuyenMai {
 
     @PrePersist
     protected void onCreate() {
-        ngayTao = LocalDateTime.now(); // Gán thời gian hiện tại
+        ngayTao = LocalDateTime.now();
     }
     @PreUpdate
     protected void onUpdate() {
-        ngayCapNhat = LocalDateTime.now(); // Gán thời gian hiện tại khi cập nhật
+        ngayCapNhat = LocalDateTime.now();
     }
 
     @Column(name = "trangthai")

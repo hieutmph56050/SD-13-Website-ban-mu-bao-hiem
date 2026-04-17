@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +27,7 @@ public class GioHangController {
         listGioHang.data = service.getList();
         return ResponseEntity.ok(listGioHang);
     }
+
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody GioHang gioHang) {
         return ResponseEntity.ok(service.add(gioHang));
@@ -62,6 +63,26 @@ public class GioHangController {
                 dto.setIdKichThuoc(gioHangChiTiet.getIdSPCT().getIdKichThuoc());
                 dto.setIdMauSac(gioHangChiTiet.getIdSPCT().getIdMauSac());
                 dto.setAnh(gioHangChiTiet.getIdSPCT().getAnh());
+                if (gioHangChiTiet.getIdSPCT().getGiaGiam() != null) {
+                    dto.setGiaGiam(gioHangChiTiet.getIdSPCT().getGiaGiam());
+                } else {
+                    dto.setGiaGiam(new BigDecimal(0));
+                }
+                dto.setTt(gioHangChiTiet.getIdSPCT().getTt());
+                dto.setMa(gioHangChiTiet.getIdSPCT().getMa());
+                dto.setIdChatLieuDem(gioHangChiTiet.getIdSPCT().getIdChatLieuDem());
+                dto.setIdChatLieuVo(gioHangChiTiet.getIdSPCT().getIdChatLieuVo());
+                dto.setIdKhuyenMai(gioHangChiTiet.getIdSPCT().getIdKhuyenMai());
+                dto.setIdLoaiKinh(gioHangChiTiet.getIdSPCT().getIdLoaiKinh());
+                dto.setIdLoaiMu(gioHangChiTiet.getIdSPCT().getIdLoaiMu());
+                dto.setMa(gioHangChiTiet.getIdSPCT().getMa());
+                dto.setIdThuongHieu(gioHangChiTiet.getIdSPCT().getIdThuongHieu());
+                dto.setMoTaCT(gioHangChiTiet.getIdSPCT().getMoTaCT());
+                dto.setNgayCapNhat(gioHangChiTiet.getIdSPCT().getNgayCapNhat());
+                dto.setNgayTao(gioHangChiTiet.getIdSPCT().getNgayTao());
+                dto.setNguoiCapNhat(gioHangChiTiet.getIdSPCT().getNguoiCapNhat());
+                dto.setNguoiTao(gioHangChiTiet.getIdSPCT().getNguoiTao());
+                dto.setXuatXu(gioHangChiTiet.getIdSPCT().getXuatXu());
                 return dto;
             }).toList();
 

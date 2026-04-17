@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/ban-hang")
@@ -57,7 +55,7 @@ public class BanHangController {
         hoaDon.setSoTienDaTra(new BigDecimal("0"));
         hoaDon.setGhiChu("Don Hang Ban Tai Quay");
         hoaDon.setDiaChi("SafeRide - Hà Nội");
-        hoaDon.setTt("Chưa Thanh Toan");
+        hoaDon.setTt("Chưa Thanh Toán");
         hoaDon.setNguoiTao(taiKhoan != null ? taiKhoan.getTen() : "Nhan Vien 1");
         hoaDon.setNgayTao(LocalDateTime.now());
         HoaDon hoaDonSaved = hoaDonRepository.save(hoaDon);
@@ -147,18 +145,10 @@ public class BanHangController {
 
     @DeleteMapping("/xoa/hdct/{id}/{hoaDonId}")
     public ResponseEntity<?> remove(@PathVariable Integer id, @PathVariable Integer hoaDonId) {
-        // Check if the invoice detail exists
-        HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietRepository.findById(id).orElseThrow(() -> new RuntimeException("Hóa đơn chi tiết không tồn tại"));
-
-        // Remove the invoice detail
-        hoaDonChiTietRepository.deleteById(id);
-
-        // Update the total amount for the invoice
-        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId).orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
+        hoaDonChiTietRepository.deleteById(hoaDonId);
+        HoaDon hoaDon = hoaDonRepository.findById(id).orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
         updateTotalAmount(hoaDon);
-
-        // Redirect to the invoice details page
-        return ResponseEntity.ok("Xóa thành công <3");
+        return ResponseEntity.ok(Collections.singletonMap("data","Xóa thành công"));
     }
 
     @PostMapping("/thanh-toan")
@@ -189,7 +179,6 @@ public class BanHangController {
 
         // Xử lý thanh toán
         hoaDon.setTt("Đã thanh toán");
-        hoaDon.setSoTienDaTra(soTienKhachTra);
         hoaDonRepository.save(hoaDon);
 
         // Cập nhật tồn kho sản phẩm
